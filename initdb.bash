@@ -1,2 +1,2 @@
-sqlite3 todo.sqlite3 < migrations/init.sql
-sqlite3 todo.sqlite3 < migrations/insert_categories.sql
+sqlite3 forum.sqlite3 < migrations/init.sql
+sqlite3 forum.sqlite3 < migrations/insert_categories.sql

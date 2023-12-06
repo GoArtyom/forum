@@ -1,8 +1,14 @@
 package repository
 
-import "database/sql"
+import (
+	"database/sql"
+	"forum/internal/models"
+	"forum/internal/repository/user"
+)
 
-type User interface{}
+type User interface {
+	CreateUser(user *models.User) error
+}
 
 type Post interface{}
 
@@ -18,5 +24,7 @@ type Repository struct {
 }
 
 func NewRepository(db *sql.DB) *Repository {
-	return &Repository{}
+	return &Repository{
+		User: user.NewUserSqlite3(db),
+	}
 }

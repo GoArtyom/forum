@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"forum/internal/models"
 	"net/http"
 )
 
@@ -28,17 +29,21 @@ func (h Handler) signupPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
-	if r.ParseForm() != nil {
+	if err := r.ParseForm(); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-	name := r.PostFormValue("name")
-	email := r.PostFormValue("email")
-	password := r.PostFormValue("password")
 	// validate name/ email/ password
-
-	err := h.template.ExecuteTemplate(w, "signup.html", nil)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+	user := models.CreateUser{
+		Name:     r.Form.Get("name"),
+		Email:    r.Form.Get("email"),
+		Password: r.Form.Get("password"),
 	}
+	err := h.service.CreateUser(&user)
+	if err != nil {
+		//validate err
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		return
+	}
+	http.Redirect(w, r, "/signin", http.StatusSeeOther) // 303
 }

@@ -1,12 +1,13 @@
 package service
 
 import (
+	"forum/internal/models"
 	"forum/internal/repository"
 	"forum/internal/service/user"
 )
 
-type User interface{
-	CreateUser()
+type User interface {
+	CreateUser(user *models.CreateUser) error
 }
 
 type Post interface{}
