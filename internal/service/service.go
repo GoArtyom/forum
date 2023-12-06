@@ -1,8 +1,13 @@
 package service
 
-import "forum/internal/repository"
+import (
+	"forum/internal/repository"
+	"forum/internal/service/user"
+)
 
-type User interface{}
+type User interface{
+	CreateUser()
+}
 
 type Post interface{}
 
@@ -18,5 +23,7 @@ type Service struct {
 }
 
 func NewService(repo *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		User: user.NewUserService(repo),
+	}
 }

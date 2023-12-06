@@ -14,7 +14,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	// get post
 	// get category
 	// get userByContext
-	err := h.template.Execute(w, nil)
+	err := h.template.ExecuteTemplate(w, "index.html", nil)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
