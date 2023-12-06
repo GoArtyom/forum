@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS posts_categories;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS session;
+DROP TABLE IF EXISTS comments_votes;
+DROP TABLE IF EXISTS posts_votes;
