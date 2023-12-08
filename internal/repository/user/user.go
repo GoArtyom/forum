@@ -2,6 +2,7 @@ package user
 
 import (
 	"database/sql"
+
 	"forum/internal/models"
 )
 
@@ -9,12 +10,19 @@ type UserSqlite struct {
 	db *sql.DB
 }
 
-func NewUserSqlite3(db *sql.DB) *UserSqlite {
+func NewUserSqlite(db *sql.DB) *UserSqlite {
 	return &UserSqlite{db: db}
 }
 
-func (r *UserSqlite) CreateUser(user *models.User) error {
+func (r *UserSqlite) CreateUser(user *models.CreateUser) error {
 	query := "INSERT INTO users (name, email, password_hash) VALUES($1, $2, $3)"
 	_, err := r.db.Exec(query, user.Name, user.Email, user.Password)
 	return err
+}
+
+func (r *UserSqlite) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	query := "SELECT * FROM users WHERE email = $1)"
+	err := r.db.QueryRow(query, user.Email).Scan(&user.Id,&user.Name, &user.Email, &user.Password)
+	return &user, err
 }
