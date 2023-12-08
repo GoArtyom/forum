@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	salt = "mgfd#gg*049u3tnfdld%"
+	salt = "mgfd#g5"
 )
 
 func GetPasswordHash(password string) string {

@@ -7,6 +7,7 @@ import (
 	"forum/internal/models"
 )
 
+// GET
 func (h Handler) signup(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/signup" {
 		log.Printf("signup: not found %s\n", r.URL.Path)
@@ -25,6 +26,7 @@ func (h Handler) signup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// POST
 func (h Handler) signupPost(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/auth/signup" {
 		log.Printf("signupPost: not found %s\n", r.URL.Path)
@@ -49,7 +51,11 @@ func (h Handler) signupPost(w http.ResponseWriter, r *http.Request) {
 	}
 	err := h.service.CreateUser(user)
 	if err != nil {
-		// validate err
+		log.Printf("signupPost: create user: %s\n", err.Error())
+		if err.Error() == models.UniqueUser.Error() {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+			return
+		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}

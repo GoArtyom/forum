@@ -27,7 +27,8 @@ func (s *UserServise) SignInUser(user *models.SignInUser) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	if user.Password != repoUser.Password {
+
+	if repoUser.Password != pkg.GetPasswordHash(user.Password) {
 		return 0, errors.New("incorrect password")
 	}
 	return repoUser.Id, nil

@@ -20,7 +20,7 @@ func (h Handler) signin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
-	err := h.template.ExecuteTemplate(w, "signin.html", nil)
+	err := h.template.ExecuteTemplate(w, "index.html", nil)
 	if err != nil {
 		log.Printf("signin: execute %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
@@ -40,7 +40,7 @@ func (h Handler) signinPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := r.ParseForm(); err != nil {
-
+		log.Printf("signinPost: parse form %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
@@ -52,12 +52,14 @@ func (h Handler) signinPost(w http.ResponseWriter, r *http.Request) {
 	userId, err := h.service.SignInUser(user)
 	if err != nil {
 		// validate err
+		log.Printf("signinPost: sign in user %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
 
 	session, err := h.service.CreateSession(userId)
 	if err != nil {
+		log.Printf("signinPost: create session %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
