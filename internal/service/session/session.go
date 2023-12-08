@@ -34,7 +34,7 @@ func (s *SessionServise) CreateSession(userId int) (*models.Session, error) {
 	newSession := &models.Session{
 		User_id:  userId,
 		UUID:     uuid.String(),
-		ExpireAt: time.Now().Add(time.Hour* 24),
+		ExpireAt: time.Now().Add(time.Second * 10),
 	}
 
 	err = s.repo.CreateSession(newSession)
@@ -43,4 +43,12 @@ func (s *SessionServise) CreateSession(userId int) (*models.Session, error) {
 	}
 
 	return newSession, nil
+}
+
+func (s *SessionServise) GetSessionByUUID(uuid string) (*models.Session, error) {
+	return s.repo.GetSessionByUUID(uuid)
+}
+
+func (s *SessionServise) DeleteSessionByUUID(uuid string) error {
+	return s.repo.DeleteSessionByUUID(uuid)
 }

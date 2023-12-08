@@ -10,6 +10,7 @@ import (
 type User interface {
 	CreateUser(user *models.CreateUser) error
 	SignInUser(user *models.SignInUser) (int, error)
+	GetUserByUserId(userId int) (*models.User, error)
 }
 
 type Post interface{}
@@ -18,6 +19,8 @@ type Comment interface{}
 
 type Session interface {
 	CreateSession(userId int) (*models.Session, error)
+	GetSessionByUUID(uuid string) (*models.Session, error)
+	DeleteSessionByUUID(uuid string) error
 }
 
 type Service struct {

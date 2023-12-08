@@ -33,3 +33,7 @@ func (s *UserServise) SignInUser(user *models.SignInUser) (int, error) {
 	}
 	return repoUser.Id, nil
 }
+
+func (s *UserServise) GetUserByUserId(userId int) (*models.User, error) {
+	return s.repo.GetUserByUserId(userId)
+}

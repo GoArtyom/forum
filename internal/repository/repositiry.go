@@ -11,6 +11,7 @@ import (
 type User interface {
 	CreateUser(user *models.CreateUser) error
 	GetUserByEmail(email string) (*models.User, error)
+	GetUserByUserId(userId int) (*models.User, error)
 }
 
 type Post interface{}
@@ -20,7 +21,8 @@ type Comment interface{}
 type Session interface {
 	CreateSession(session *models.Session) error
 	GetSessionByUserId(userId int) (*models.Session, error)
-	DeleteSessionByUUID(sessionId string) error
+	GetSessionByUUID(uuid string) (*models.Session, error)
+	DeleteSessionByUUID(uuid string) error
 }
 
 type Repository struct {

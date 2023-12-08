@@ -20,9 +20,9 @@ func (r *SessionSqlite) CreateSession(session *models.Session) error {
 	return err
 }
 
-func (r *SessionSqlite) DeleteSessionByUUID(sessionId string) error {
+func (r *SessionSqlite) DeleteSessionByUUID(uuid string) error {
 	query := "DELETE FROM sessions WHERE uuid = $1"
-	_, err := r.db.Exec(query, sessionId)
+	_, err := r.db.Exec(query, uuid)
 	return err
 }
 
@@ -30,5 +30,12 @@ func (r *SessionSqlite) GetSessionByUserId(userId int) (*models.Session, error) 
 	session := models.Session{}
 	query := "SELECT * FROM sessions WHERE user_id = $1"
 	err := r.db.QueryRow(query, userId).Scan(&session.User_id, &session.UUID, &session.ExpireAt)
+	return &session, err
+}
+
+func (r *SessionSqlite) GetSessionByUUID(uuid string) (*models.Session, error) {
+	session := models.Session{}
+	query := "SELECT * FROM sessions WHERE uuid = $1"
+	err := r.db.QueryRow(query, uuid).Scan(&session.User_id, &session.UUID, &session.ExpireAt)
 	return &session, err
 }
