@@ -9,7 +9,7 @@ import (
 )
 
 // GET
-func (h Handler) signup(w http.ResponseWriter, r *http.Request) {
+func (h Handler) signupGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/signup" {
 		log.Printf("signup: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -28,7 +28,7 @@ func (h Handler) signup(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST
-func (h Handler) signupPost(w http.ResponseWriter, r *http.Request) {
+func (h Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/auth/signup" {
 		log.Printf("signupPost: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404

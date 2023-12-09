@@ -36,9 +36,9 @@ func (r *UserSqlite) GetUserByEmail(email string) (*models.User, error) {
 }
 
 func (r *UserSqlite) GetUserByUserId(userId int) (*models.User, error) {
-	var user models.User
+	user := &models.User{}
 	fmt.Println("repo:", userId)
 	query := "SELECT * FROM users WHERE id = $1"
 	err := r.db.QueryRow(query, userId).Scan(&user.Id, &user.Name, &user.Email, &user.Password)
-	return &user, err
+	return user, err
 }

@@ -44,3 +44,10 @@ func (r *PostSqlite) CreatePost(post *models.CreatePost) (int, error) {
 	}
 	return int(postId), tx.Commit()
 }
+
+func (r *PostSqlite) GetPostById(postId int) (*models.Post, error) {
+	post := &models.Post{}
+	query := "SELECT * FROM posts WHERE id = $1"
+	err := r.db.QueryRow(query, postId).Scan(&post.PostId, &post.Title, &post.Content, &post.UserId, &post.UserName, &post.CreateAt)
+	return post, err
+}

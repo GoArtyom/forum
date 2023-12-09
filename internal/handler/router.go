@@ -9,13 +9,14 @@ func (h Handler) InitRouters() http.Handler {
 
 	mux.HandleFunc("/", h.index)
 
-	mux.HandleFunc("/signin", h.signin)
-	mux.HandleFunc("/signup", h.signup)
+	mux.HandleFunc("/signin", h.signinGET)
+	mux.HandleFunc("/signup", h.signupGET)
 
-	mux.HandleFunc("/auth/signin", h.signinPost)
-	mux.HandleFunc("/auth/signup", h.signupPost)
+	mux.HandleFunc("/auth/signin", h.signinPOST)
+	mux.HandleFunc("/auth/signup", h.signupPOST)
 
-	mux.Handle("/post/create", h.authorization(http.HandlerFunc(h.createPost)))
+	mux.Handle("/post/create", h.authorization(http.HandlerFunc(h.createPostPOST)))
+	mux.HandleFunc("/post/", h.onePostGET)
 
 	return h.sessionMiddleware(mux)
 }
