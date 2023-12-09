@@ -20,3 +20,7 @@ func (s *PostService) CreatePost(post *models.CreatePost) (int, error) {
 func (s *PostService) GetPostById(postId int) (*models.Post, error) {
 	return s.repo.GetPostById(postId)
 }
+
+func (s *PostService)GetAllPost() ([]*models.Post, error){
+	return s.repo.GetAllPost()
+}

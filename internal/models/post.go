@@ -23,7 +23,9 @@ type Post struct {
 }
 
 type Data struct {
-	Post     *Post      `json:"post"`
-	Posts    []*Post    `json:"posts"`
-	Comments []*Comment `json:"coments"`
+	User       *User        `json:"user"`
+	Post       *Post       `json:"post"`
+	Posts      []*Post     `json:"posts"`
+	Comments   []*Comment  `json:"coments"`
+	Categories []*Category `json:"categories"`
 }

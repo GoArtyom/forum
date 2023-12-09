@@ -1,3 +1,16 @@
+
+{{with .User}}
+    USER
+    Id:{{.Id}}
+    Name:{{.Name}}
+    Email:{{.Email}}
+    Password:{{.Password}}
+{{end}}
+
+{{range .Categories}}
+    Name:{{.Name}}
+{{end}}
+
 {{if .Posts}}
 POST IN RANGE
     {{range .Posts}}
@@ -10,14 +23,14 @@ POST IN RANGE
     {{end}}
 {{end}}
 
-{{if .Post}}
+{{with .Post}}
 POST BY ID
-    POST:{{.Post.PostId}} <!-- Используйте .Post.PostId, если это поле определено для одного поста -->
-    Title:{{.Post.Title}}
-    Content:{{.Post.Content}}
-    UserId:{{.Post.UserId}}
-    UserNane:{{.Post.UserName}}
-    CreateAt:{{.Post.CreateAt}}
+    PostId:{{.PostId}} 
+    Title:{{.Title}}
+    Content:{{.Content}}
+    UserId:{{.UserId}}
+    UserNane:{{.UserName}}
+    CreateAt:{{.CreateAt}}
 {{end}}
 {{if .Comments}}
 COMMENTS IS RANGE

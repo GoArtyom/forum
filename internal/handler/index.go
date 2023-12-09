@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	"forum/internal/models"
 	"log"
 	"net/http"
 )
@@ -12,14 +12,32 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
+	
 	if r.Method != http.MethodGet {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
-	// get post
-	// get category
-	// get userByContext
-	err := h.template.ExecuteTemplate(w, "index.html", fmt.Sprintf("Path:%s\nMethod:%s", r.URL.Path, r.Method))
+
+	user := h.getUserFromContext(r)
+
+	posts, err := h.service.GetAllPost()
+	if err != nil {
+		log.Printf("index: get all post %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+	}
+
+	categories, err := h.service.GetAllCategory()
+	if err != nil {
+		log.Printf("index: get all category %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+	}
+
+	err = h.template.ExecuteTemplate(w, "index.html", models.Data{
+		User:       user,
+		Posts:      posts,
+		Categories: categories,
+	})
+
 	if err != nil {
 		log.Printf("index: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500

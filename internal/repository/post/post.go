@@ -51,3 +51,26 @@ func (r *PostSqlite) GetPostById(postId int) (*models.Post, error) {
 	err := r.db.QueryRow(query, postId).Scan(&post.PostId, &post.Title, &post.Content, &post.UserId, &post.UserName, &post.CreateAt)
 	return post, err
 }
+func (r *PostSqlite) GetAllPost() ([]*models.Post, error) {
+	query := "SELECT * FROM posts"
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	posts := make([]*models.Post, 0)
+	for rows.Next() {
+		post := new(models.Post)
+		err := rows.Scan(&post.PostId, &post.Title, &post.Content,
+			&post.UserId, &post.UserName, &post.CreateAt)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}

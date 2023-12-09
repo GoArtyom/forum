@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"forum/internal/models"
+	"forum/internal/repository/category"
 	"forum/internal/repository/comment"
 	"forum/internal/repository/post"
 	"forum/internal/repository/session"
@@ -19,6 +20,7 @@ type User interface {
 type Post interface {
 	CreatePost(post *models.CreatePost) (int, error)
 	GetPostById(postId int) (*models.Post, error)
+	GetAllPost() ([]*models.Post, error)
 }
 
 type Comment interface {
@@ -33,18 +35,24 @@ type Session interface {
 	DeleteSessionByUUID(uuid string) error
 }
 
+type Category interface {
+	GetAllCategory() ([]*models.Category, error)
+}
+
 type Repository struct {
 	User
 	Post
 	Comment
 	Session
+	Category
 }
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
-		User:    user.NewUserSqlite(db),
-		Post:    post.NewPostSqlite(db),
-		Comment: comment.NewCommentSqlite(db),
-		Session: session.NewSessionSqlite(db),
+		User:     user.NewUserSqlite(db),
+		Post:     post.NewPostSqlite(db),
+		Comment:  comment.NewCommentSqlite(db),
+		Session:  session.NewSessionSqlite(db),
+		Category: category.NewCategorySqlite(db),
 	}
 }

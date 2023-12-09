@@ -97,5 +97,6 @@ func (h Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
+	
 	http.Redirect(w, r, fmt.Sprintf("/post/%d", id), http.StatusSeeOther) // 303
 }
