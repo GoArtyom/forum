@@ -23,6 +23,7 @@ type Post interface {
 
 type Comment interface {
 	CreateComment(comment *models.CreateComment) error
+	GetAllCommentByPostId(postId int) ([]*models.Comment, error)
 }
 
 type Session interface {

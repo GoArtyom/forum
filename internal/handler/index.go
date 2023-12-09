@@ -21,6 +21,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	// get userByContext
 	err := h.template.ExecuteTemplate(w, "index.html", fmt.Sprintf("Path:%s\nMethod:%s", r.URL.Path, r.Method))
 	if err != nil {
+		log.Printf("index: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }

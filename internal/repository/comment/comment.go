@@ -23,3 +23,27 @@ func (r *CommentSqlite) CreateComment(comment *models.CreateComment) error {
 	_, err = r.db.Exec(query2, comment.PostId, comment.Content, comment.UserId, comment.UserName, comment.CreateAt)
 	return err
 }
+
+func (r *CommentSqlite) GetAllCommentByPostId(postId int) ([]*models.Comment, error) {
+	query := "SELECT * FROM comments WHERE post_id = $1"
+	rows, err := r.db.Query(query, postId)
+	if err != nil {
+		return nil, err
+	}
+	comments := make([]*models.Comment, 0)
+	for rows.Next() {
+		comment := new(models.Comment)
+		err := rows.Scan(&comment.Id, &comment.PostId, &comment.Content,
+			&comment.UserId, &comment.UserName, &comment.CreateAt)
+		if err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
+	
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return comments, nil
+}

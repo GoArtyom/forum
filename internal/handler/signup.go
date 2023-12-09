@@ -22,7 +22,7 @@ func (h Handler) signupGET(w http.ResponseWriter, r *http.Request) {
 	}
 	err := h.template.ExecuteTemplate(w, "index.html", fmt.Sprintf("Path:%s\nMethod:%s", r.URL.Path, r.Method))
 	if err != nil {
-		log.Printf("signup: execute %s\n", err.Error())
+		log.Printf("signup: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"forum/internal/models"
 	"forum/internal/repository"
 	"forum/pkg"
@@ -22,7 +21,6 @@ func (s *UserService) CreateUser(user *models.CreateUser) error {
 }
 
 func (s *UserService) SignInUser(user *models.SignInUser) (int, error) {
-	fmt.Println("(s *UserService) SignInUser")
 	repoUser, err := s.repo.GetUserByEmail(user.Email)
 	if err != nil {
 		return 0, models.IncorData

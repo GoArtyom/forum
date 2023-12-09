@@ -1,1 +1,33 @@
-<h1>{{ . }}</h1>
+{{if .Posts}}
+POST IN RANGE
+    {{range .Posts}}
+        POST:{{.PostId}} <!-- Используйте .PostId, если это поле определено для каждого поста -->
+        Title:{{.Title}}
+        Content:{{.Content}}
+        UserId:{{.UserId}}
+        UserNane:{{.UserNane}}
+        CreateAt:{{.CreateAt}}
+    {{end}}
+{{end}}
+
+{{if .Post}}
+POST BY ID
+    POST:{{.Post.PostId}} <!-- Используйте .Post.PostId, если это поле определено для одного поста -->
+    Title:{{.Post.Title}}
+    Content:{{.Post.Content}}
+    UserId:{{.Post.UserId}}
+    UserNane:{{.Post.UserName}}
+    CreateAt:{{.Post.CreateAt}}
+{{end}}
+{{if .Comments}}
+COMMENTS IS RANGE
+    {{range .Comments}}
+    COMMENT
+        Id:{{.Id}}
+        PostId:{{.PostId}}
+        Content:{{.Content}}
+        UserId:{{.UserId}}
+        UserName:{{.UserName}}
+        CreateAt:{{.CreateAt}}
+    {{end}}
+{{end}}

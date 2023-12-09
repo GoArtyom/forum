@@ -60,6 +60,7 @@ func (h Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 
 	err = h.template.ExecuteTemplate(w, "index.html", newComment)
 	if err != nil {
+		log.Printf("createCommentPOST: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 

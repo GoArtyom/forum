@@ -23,7 +23,7 @@ func (h Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 	}
 	err := h.template.ExecuteTemplate(w, "index.html", fmt.Sprintf("Path:%s\nMethod:%s", r.URL.Path, r.Method))
 	if err != nil {
-		log.Printf("signin: execute %s\n", err.Error())
+		log.Printf("signin: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }

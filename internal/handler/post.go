@@ -40,9 +40,18 @@ func (h Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-	
-	err = h.template.ExecuteTemplate(w, "index.html", post)
+	comments, err := h.service.GetAllCommentByPostId(post.PostId)
 	if err != nil {
+		log.Printf("onePostGET: get all comment by id: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		return
+	}
+	err = h.template.ExecuteTemplate(w, "index.html", &models.Data{
+		Post:     post,
+		Comments: comments,
+	})
+	if err != nil {
+		log.Printf("onePostGET: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }
