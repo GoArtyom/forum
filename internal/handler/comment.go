@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/internal/models"
 	"log"
 	"net/http"
@@ -58,10 +59,5 @@ func (h Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.template.ExecuteTemplate(w, "index.html", newComment)
-	if err != nil {
-		log.Printf("createCommentPOST: ExecuteTemplate %s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-	}
-
+	http.Redirect(w, r, fmt.Sprintf("/post/%d", postId), http.StatusSeeOther) // 303
 }

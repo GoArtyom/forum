@@ -50,6 +50,7 @@ func (h Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 		Post:     post,
 		Comments: comments,
 	})
+	
 	if err != nil {
 		log.Printf("onePostGET: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
