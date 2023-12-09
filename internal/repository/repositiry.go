@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"forum/internal/models"
+	"forum/internal/repository/post"
 	"forum/internal/repository/session"
 	"forum/internal/repository/user"
 )
@@ -14,7 +15,9 @@ type User interface {
 	GetUserByUserId(userId int) (*models.User, error)
 }
 
-type Post interface{}
+type Post interface {
+	CreatePost(post *models.CreatePost) (int, error)
+}
 
 type Comment interface{}
 
@@ -35,6 +38,7 @@ type Repository struct {
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
 		User:    user.NewUserSqlite(db),
+		Post:    post.NewPostSqlite(db),
 		Session: session.NewSessionSqlite(db),
 	}
 }

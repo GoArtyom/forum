@@ -34,7 +34,7 @@ func (s *SessionServise) CreateSession(userId int) (*models.Session, error) {
 	newSession := &models.Session{
 		User_id:  userId,
 		UUID:     uuid.String(),
-		ExpireAt: time.Now().Add(time.Second * 10),
+		ExpireAt: time.Now().Add(time.Minute * 4),
 	}
 
 	err = s.repo.CreateSession(newSession)

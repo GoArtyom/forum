@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"forum/internal/models"
 	"forum/pkg"
 )
 
@@ -48,8 +47,8 @@ func (h Handler) sessionMiddleware(next http.Handler) http.Handler {
 
 func (h Handler) authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Context().Value(keyUser).(*models.User)
-		if !ok {
+		user := h.getUserFromContext(r)
+		if user == nil {
 			http.Redirect(w, r, "/signin", http.StatusSeeOther) // 303
 			return
 		}

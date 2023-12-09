@@ -15,5 +15,7 @@ func (h Handler) InitRouters() http.Handler {
 	mux.HandleFunc("/auth/signin", h.signinPost)
 	mux.HandleFunc("/auth/signup", h.signupPost)
 
+	mux.Handle("/post/create", h.authorization(http.HandlerFunc(h.createPost)))
+
 	return h.sessionMiddleware(mux)
 }
