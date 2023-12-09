@@ -36,10 +36,11 @@ func (h Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 			return
 		}
-		log.Printf("onePostGET: get post by id post: %s\n", err.Error())
+		log.Printf("onePostGET: get post by id: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
+	
 	err = h.template.ExecuteTemplate(w, "index.html", post)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
@@ -49,7 +50,7 @@ func (h Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 // POST
 func (h Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/post/create" {
-		log.Printf("createPost: not found %s\n", r.URL.Path)
+		log.Printf("createPostPOST: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}

@@ -2,7 +2,6 @@ package user
 
 import (
 	"database/sql"
-	"fmt"
 
 	"forum/internal/models"
 )
@@ -29,15 +28,14 @@ func (r *UserSqlite) CreateUser(user *models.CreateUser) error {
 
 func (r *UserSqlite) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
-	fmt.Println("repo:", email)
 	query := "SELECT * FROM users WHERE email = $1"
 	err := r.db.QueryRow(query, email).Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+
 	return &user, err
 }
 
 func (r *UserSqlite) GetUserByUserId(userId int) (*models.User, error) {
 	user := &models.User{}
-	fmt.Println("repo:", userId)
 	query := "SELECT * FROM users WHERE id = $1"
 	err := r.db.QueryRow(query, userId).Scan(&user.Id, &user.Name, &user.Email, &user.Password)
 	return user, err

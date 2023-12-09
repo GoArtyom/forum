@@ -52,8 +52,12 @@ func (h Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	userId, err := h.service.SignInUser(user)
 	if err != nil {
-		// validate err
 		log.Printf("signinPost: sign in user %s\n", err.Error())
+		if err == models.IncorData {
+			
+			http.Redirect(w, r, "/signin", http.StatusSeeOther) // 303
+			return
+		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}

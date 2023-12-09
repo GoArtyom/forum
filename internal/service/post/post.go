@@ -5,18 +5,18 @@ import (
 	"forum/internal/repository"
 )
 
-type PostServise struct {
+type PostService struct {
 	repo repository.Post
 }
 
-func NewPostService(repo repository.Post) *PostServise {
-	return &PostServise{repo: repo}
+func NewPostService(repo repository.Post) *PostService {
+	return &PostService{repo: repo}
 }
 
-func (s *PostServise) CreatePost(post *models.CreatePost) (int, error) {
+func (s *PostService) CreatePost(post *models.CreatePost) (int, error) {
 	return s.repo.CreatePost(post)
 }
 
-func (s *PostServise) GetPostById(postId int) (*models.Post, error) {
+func (s *PostService) GetPostById(postId int) (*models.Post, error) {
 	return s.repo.GetPostById(postId)
 }

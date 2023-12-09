@@ -9,15 +9,15 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-type SessionServise struct {
+type SessionService struct {
 	repo repository.Session
 }
 
-func NewSessionServise(repo repository.Session) *SessionServise {
-	return &SessionServise{repo: repo}
+func NewSessionService(repo repository.Session) *SessionService {
+	return &SessionService{repo: repo}
 }
 
-func (s *SessionServise) CreateSession(userId int) (*models.Session, error) {
+func (s *SessionService) CreateSession(userId int) (*models.Session, error) {
 	oldSession, _ := s.repo.GetSessionByUserId(userId)
 	if oldSession != nil {
 		err := s.repo.DeleteSessionByUUID(oldSession.UUID)
@@ -45,10 +45,10 @@ func (s *SessionServise) CreateSession(userId int) (*models.Session, error) {
 	return newSession, nil
 }
 
-func (s *SessionServise) GetSessionByUUID(uuid string) (*models.Session, error) {
+func (s *SessionService) GetSessionByUUID(uuid string) (*models.Session, error) {
 	return s.repo.GetSessionByUUID(uuid)
 }
 
-func (s *SessionServise) DeleteSessionByUUID(uuid string) error {
+func (s *SessionService) DeleteSessionByUUID(uuid string) error {
 	return s.repo.DeleteSessionByUUID(uuid)
 }

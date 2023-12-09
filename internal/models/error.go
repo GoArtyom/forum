@@ -7,4 +7,7 @@ const (
 	UniqueName  = "UNIQUE constraint failed: users.name"
 )
 
-var UniqueUser = errors.New("unique user")
+var (
+	UniqueUser = errors.New("unique user")
+	IncorData  = errors.New("incorrect password or email")
+)

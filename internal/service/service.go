@@ -3,6 +3,7 @@ package service
 import (
 	"forum/internal/models"
 	"forum/internal/repository"
+	"forum/internal/service/comment"
 	"forum/internal/service/post"
 	"forum/internal/service/session"
 	"forum/internal/service/user"
@@ -19,7 +20,9 @@ type Post interface {
 	GetPostById(postId int) (*models.Post, error)
 }
 
-type Comment interface{}
+type Comment interface{
+	CreateComment(comment *models.CreateComment) error 
+}
 
 type Session interface {
 	CreateSession(userId int) (*models.Session, error)
@@ -38,6 +41,7 @@ func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		User:    user.NewUserService(repo),
 		Post:    post.NewPostService(repo),
-		Session: session.NewSessionServise(repo),
+		Comment: comment.NewCommentServer(repo),
+		Session: session.NewSessionService(repo),
 	}
 }

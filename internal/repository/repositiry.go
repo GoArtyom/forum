@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"forum/internal/models"
+	"forum/internal/repository/comment"
 	"forum/internal/repository/post"
 	"forum/internal/repository/session"
 	"forum/internal/repository/user"
@@ -20,7 +21,9 @@ type Post interface {
 	GetPostById(postId int) (*models.Post, error)
 }
 
-type Comment interface{}
+type Comment interface {
+	CreateComment(comment *models.CreateComment) error
+}
 
 type Session interface {
 	CreateSession(session *models.Session) error
@@ -40,6 +43,7 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
 		User:    user.NewUserSqlite(db),
 		Post:    post.NewPostSqlite(db),
+		Comment: comment.NewCommentSqlite(db),
 		Session: session.NewSessionSqlite(db),
 	}
 }

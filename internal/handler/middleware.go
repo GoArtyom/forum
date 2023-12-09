@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -21,8 +20,6 @@ func (h Handler) sessionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		session, err := h.service.GetSessionByUUID(cookie.Value)
-		fmt.Println(session.User_id)
-		fmt.Println(session.ExpireAt)
 		if err != nil {
 			pkg.DeleteCookie(w)
 			next.ServeHTTP(w, r)
