@@ -27,3 +27,6 @@ func (s *PostService) GetAllPost() ([]*models.Post, error) {
 func (s *PostService) GetPostsByUserId(userId int) ([]*models.Post, error) {
 	return s.repo.GetPostsByUserId(userId)
 }
+func (s *PostService)GetPostsByCategory(category string) ([]*models.Post, error){
+	return s.repo.GetPostsByCategory(category)
+}

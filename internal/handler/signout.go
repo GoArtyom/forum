@@ -17,6 +17,7 @@ func (h *Handler) signoutPOST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
+	
 	session, err := pkg.GetCookie(r)
 	if err != nil {
 		log.Printf("signoutPOST:get cookie %s\n", r.URL.Path)

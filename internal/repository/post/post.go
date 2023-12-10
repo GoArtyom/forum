@@ -104,3 +104,27 @@ func (r *PostSqlite) GetPostsByUserId(userId int) ([]*models.Post, error) {
 
 	return posts, nil
 }
+
+func (r *PostSqlite) GetPostsByCategory(category string) ([]*models.Post, error) {
+	query := "SELECT * FROM posts p JOIN posts_categories c ON p.id = c.post_id  WHERE c.category_name = $1"
+	rows, err := r.db.Query(query, category)
+	if err != nil {
+		return nil, err
+	}
+	posts := make([]*models.Post, 0)
+	for rows.Next() {
+		post := new(models.Post)
+		err := rows.Scan(&post.PostId, &post.Title, &post.Content,
+			&post.UserId, &post.UserName, &post.CreateAt)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}

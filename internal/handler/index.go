@@ -24,12 +24,14 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("index: get all post %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		return
 	}
 
 	categories, err := h.service.GetAllCategory()
 	if err != nil {
 		log.Printf("index: get all category %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		return
 	}
 
 	err = h.template.ExecuteTemplate(w, "index.html", models.Data{

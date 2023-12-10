@@ -21,6 +21,7 @@ type Post interface {
 	GetPostById(postId int) (*models.Post, error)
 	GetAllPost() ([]*models.Post, error)
 	GetPostsByUserId(userId int) ([]*models.Post, error)
+	GetPostsByCategory(category string) ([]*models.Post, error)
 }
 
 type Comment interface {
