@@ -3,8 +3,9 @@ package models
 import "errors"
 
 const (
-	UniqueEmail = "UNIQUE constraint failed: users.email"
-	UniqueName  = "UNIQUE constraint failed: users.name"
+	UniqueEmail  = "UNIQUE constraint failed: users.email"
+	UniqueName   = "UNIQUE constraint failed: users.name"
+	IncorRequest = "FOREIGN KEY constraint failed"
 )
 
 var (

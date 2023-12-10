@@ -50,7 +50,7 @@ func (h Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 		Post:     post,
 		Comments: comments,
 	})
-	
+
 	if err != nil {
 		log.Printf("onePostGET: ExecuteTemplate %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
@@ -94,9 +94,13 @@ func (h Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
 	id, err := h.service.CreatePost(newPost)
 	if err != nil {
 		log.Printf("createPostPOST: create post: %s\n", err.Error())
+		if err.Error() == models.IncorRequest {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+			return
+		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-	
+
 	http.Redirect(w, r, fmt.Sprintf("/post/%d", id), http.StatusSeeOther) // 303
 }

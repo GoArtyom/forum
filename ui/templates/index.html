@@ -1,4 +1,3 @@
-
 {{with .User}}
     USER
     Id:{{.Id}}
@@ -14,11 +13,11 @@
 {{if .Posts}}
 POST IN RANGE
     {{range .Posts}}
-        POST:{{.PostId}} <!-- Используйте .PostId, если это поле определено для каждого поста -->
+        POST:{{.PostId}} 
         Title:{{.Title}}
         Content:{{.Content}}
         UserId:{{.UserId}}
-        UserNane:{{.UserNane}}
+        UserName:{{.UserName}}
         CreateAt:{{.CreateAt}}
     {{end}}
 {{end}}
