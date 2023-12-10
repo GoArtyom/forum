@@ -24,6 +24,7 @@ func (h *Handler) InitRouters() http.Handler {
 	
 	mux.HandleFunc("/filterposts", h.filterPostsPOST)
 	mux.Handle("/myposts", h.authorization(http.HandlerFunc(h.myPostsGET)))
+	mux.Handle("/likeposts", h.authorization(http.HandlerFunc(h.likePostsGET)))
 	
 	return h.sessionMiddleware(mux)
 }
