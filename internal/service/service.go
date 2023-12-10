@@ -20,6 +20,7 @@ type Post interface {
 	CreatePost(post *models.CreatePost) (int, error)
 	GetPostById(postId int) (*models.Post, error)
 	GetAllPost() ([]*models.Post, error)
+	GetPostsByUserId(userId int) ([]*models.Post, error)
 }
 
 type Comment interface {

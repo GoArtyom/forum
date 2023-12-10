@@ -21,6 +21,9 @@ func (s *PostService) GetPostById(postId int) (*models.Post, error) {
 	return s.repo.GetPostById(postId)
 }
 
-func (s *PostService)GetAllPost() ([]*models.Post, error){
+func (s *PostService) GetAllPost() ([]*models.Post, error) {
 	return s.repo.GetAllPost()
+}
+func (s *PostService) GetPostsByUserId(userId int) ([]*models.Post, error) {
+	return s.repo.GetPostsByUserId(userId)
 }
