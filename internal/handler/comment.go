@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (h Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/comment/create" {
 		log.Printf("createCommentPOST: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404

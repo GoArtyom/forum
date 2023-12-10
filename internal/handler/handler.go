@@ -31,7 +31,7 @@ func (h *Handler) getUserFromContext(r *http.Request) *models.User {
 	return user
 }
 
-func (h Handler) getPostIdFromURL(path string) (int, error) {
+func (h *Handler) getPostIdFromURL(path string) (int, error) {
 	parts := strings.Split(path, "/")
 	if len(parts) != 3 {
 		return 0, errors.New("incorrect path")

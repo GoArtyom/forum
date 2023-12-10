@@ -12,7 +12,7 @@ import (
 )
 
 // GET
-func (h Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasPrefix(r.URL.Path, "/post/") {
 		log.Printf("onePostGET: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -58,7 +58,7 @@ func (h Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST
-func (h Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/post/create" {
 		log.Printf("createPostPOST: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404

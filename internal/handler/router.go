@@ -2,7 +2,7 @@ package handler
 
 import "net/http"
 
-func (h Handler) InitRouters() http.Handler {
+func (h *Handler) InitRouters() http.Handler {
 	mux := http.NewServeMux()
 	fileServer := http.FileServer(http.Dir("./ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
@@ -21,6 +21,7 @@ func (h Handler) InitRouters() http.Handler {
 	mux.Handle("/comment/create", h.authorization(http.HandlerFunc(h.createCommentPOST)))
 
 	mux.Handle("/myposts", h.authorization(http.HandlerFunc(h.myPostsGET)))
+	mux.Handle("/auth/signout", h.authorization(http.HandlerFunc(h.signoutPOST)))
 
 	return h.sessionMiddleware(mux)
 }

@@ -7,7 +7,7 @@ import (
 )
 
 // GET
-func (h Handler) myPostsGET(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) myPostsGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/myposts" {
 		log.Printf("myPostsGET: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404

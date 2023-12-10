@@ -10,7 +10,7 @@ import (
 )
 
 // GET
-func (h Handler) signinGET(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/signin" {
 		log.Printf("signin: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -29,7 +29,7 @@ func (h Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST
-func (h Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/auth/signin" {
 		log.Printf("signinPost: not found %s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
