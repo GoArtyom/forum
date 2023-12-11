@@ -12,18 +12,18 @@ import (
 // GET
 func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/signin" {
-		log.Printf("signin: not found %s\n", r.URL.Path)
+		log.Printf("signinGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
 	if r.Method != http.MethodGet {
-		log.Printf("signin: method not allowed %s\n", r.Method)
+		log.Printf("signinGET:StatusMethodNotAllowed:%s\n", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
 	err := h.template.ExecuteTemplate(w, "index.html", fmt.Sprintf("Path:%s\nMethod:%s", r.URL.Path, r.Method))
 	if err != nil {
-		log.Printf("signin: ExecuteTemplate %s\n", err.Error())
+		log.Printf("signinGET:ExecuteTemplate:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }
@@ -31,17 +31,17 @@ func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 // POST
 func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/auth/signin" {
-		log.Printf("signinPost: not found %s\n", r.URL.Path)
+		log.Printf("signinPOST:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
 	if r.Method != http.MethodPost {
-		log.Printf("signinPost: method not allowed %s\n", r.Method)
+		log.Printf("signinPOST:StatusMethodNotAllowed:%s\n", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
 	if err := r.ParseForm(); err != nil {
-		log.Printf("signinPost: parse form %s\n", err.Error())
+		log.Printf("signinPOST:ParseForm:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
@@ -52,9 +52,8 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	userId, err := h.service.SignInUser(user)
 	if err != nil {
-		log.Printf("signinPost: sign in user %s\n", err.Error())
+		log.Printf("signinPOST:SignInUser:%s\n", err.Error())
 		if err == models.IncorData {
-			
 			http.Redirect(w, r, "/signin", http.StatusSeeOther) // 303
 			return
 		}
@@ -64,7 +63,7 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 
 	session, err := h.service.CreateSession(userId)
 	if err != nil {
-		log.Printf("signinPost: create session %s\n", err.Error())
+		log.Printf("signinPOST:CreateSession:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}

@@ -11,18 +11,18 @@ import (
 // GET
 func (h *Handler) signupGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/signup" {
-		log.Printf("signupGET: not found %s\n", r.URL.Path)
+		log.Printf("signupGET:StatusNotFound%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
 	if r.Method != http.MethodGet {
-		log.Printf("signupGET: method not allowed %s\n", r.Method)
+		log.Printf("signupGET:StatusMethodNotAllowed:%s\n", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
 	err := h.template.ExecuteTemplate(w, "index.html", fmt.Sprintf("Path:%s\nMethod:%s", r.URL.Path, r.Method))
 	if err != nil {
-		log.Printf("signupGET: ExecuteTemplate %s\n", err.Error())
+		log.Printf("signupGET:ExecuteTemplate:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }
@@ -30,12 +30,12 @@ func (h *Handler) signupGET(w http.ResponseWriter, r *http.Request) {
 // POST
 func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/auth/signup" {
-		log.Printf("signupPOST: not found %s\n", r.URL.Path)
+		log.Printf("signupPOST:StatusNotFound%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
 	if r.Method != http.MethodPost {
-		log.Printf("signupPOST: method not allowed %s\n", r.Method)
+		log.Printf("signupPOST:StatusMethodNotAllowed:%s\n", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
@@ -52,7 +52,7 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	err := h.service.CreateUser(user)
 	if err != nil {
-		log.Printf("signupPOST: create user: %s\n", err.Error())
+		log.Printf("signupPOST:CreateUser:%s\n", err.Error())
 		if err.Error() == models.UniqueUser.Error() {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 			return

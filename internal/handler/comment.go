@@ -50,7 +50,7 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 	err = h.service.CreateComment(newComment)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Printf("createCommentPOST: post not found: %s\n", err.Error())
+			log.Printf("createCommentPOST:CreateComment:post not found:%s\n", err.Error())
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 			return
 		}

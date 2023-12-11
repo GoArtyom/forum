@@ -9,12 +9,12 @@ import (
 
 func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/likeposts" {
-		log.Printf("likePostsGET: not found %s\n", r.URL.Path)
+		log.Printf("likePostsGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
 	if r.Method != http.MethodGet {
-		log.Printf("likePostsGET: method not allowed %s\n", r.Method)
+		log.Printf("likePostsGET:StatusMethodNotAllowed:%s\n", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
@@ -23,7 +23,7 @@ func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
 
 	posts, err := h.service.GetPostsByLike(user.Id)
 	if err != nil {
-		log.Printf("likePostsGET: get all post %s\n", err.Error())
+		log.Printf("likePostsGET:GetPostsByLike:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
@@ -34,7 +34,7 @@ func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		log.Printf("likePostsGET: ExecuteTemplate %s\n", err.Error())
+		log.Printf("likePostsGET:ExecuteTemplate:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }
