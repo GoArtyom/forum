@@ -50,7 +50,7 @@ func (h *Handler) getVote(voteStr string) (int, error) {
 		return 0, err
 	}
 	if vote != 1 && vote != -1 {
-		return 0, errors.New(fmt.Sprintf("incorrect request vote = %d", vote))
+		return 0, fmt.Errorf("incorrect request vote = %d", vote)
 	}
 	return vote, nil
 }
@@ -61,7 +61,7 @@ func (h *Handler) getPostIdFromForm(postIdStr string) (int, error) {
 		return 0, err
 	}
 	if postId < 1 {
-		return 0, errors.New(fmt.Sprintf("incorrect request postId = %d", postId))
+		return 0, fmt.Errorf("incorrect request postId = %d", postId)
 	}
 	return postId, nil
 }
