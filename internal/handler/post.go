@@ -87,14 +87,14 @@ func (h *Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// validate categories
-	
+
 	user := h.getUserFromContext(r)
 	newPost := &models.CreatePost{
 		Title:      r.Form.Get("title"),
 		Content:    r.Form.Get("content"),
 		UserId:     user.Id,
 		UserName:   user.Name,
-		Categories: &categories,
+		Categories: categories,
 		CreateAt:   time.Now(),
 	}
 	id, err := h.service.CreatePost(newPost)

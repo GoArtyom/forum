@@ -30,6 +30,12 @@ POST BY ID
     UserId:{{.UserId}}
     UserNane:{{.UserName}}
     CreateAt:{{.CreateAt}}
+    Like:{{.Like}}
+    Dislike:{{.Dislike}}
+    Categories
+    {{range .Categories}}
+        Name:{{.}}
+    {{end}}
 {{end}}
 {{if .Comments}}
 COMMENTS IS RANGE

@@ -38,10 +38,10 @@ func (r *PostSqlite) CreatePost(post *models.CreatePost) (int, error) {
 		return 0, err
 	}
 
-	query2 := "INSERT INTO posts_categories (post_id, category_name) VALUES ($1, $2) "
-	for _, category := range *post.Categories {
+	query = "INSERT INTO posts_categories (post_id, category_name) VALUES ($1, $2) "
+	for _, category := range post.Categories {
 		fmt.Printf("postId:%d category:%s\n", postId, category)
-		_, err := tx.Exec(query2, postId, category)
+		_, err := tx.Exec(query, postId, category)
 		if err != nil {
 			fmt.Println("Err4")
 			tx.Rollback()
@@ -55,6 +55,33 @@ func (r *PostSqlite) GetPostById(postId int) (*models.Post, error) {
 	post := &models.Post{}
 	query := "SELECT * FROM posts WHERE id = $1"
 	err := r.db.QueryRow(query, postId).Scan(&post.PostId, &post.Title, &post.Content, &post.UserId, &post.UserName, &post.CreateAt)
+	if err != nil {
+		return nil, err
+	}
+	// like & dislike
+	query = "SELECT COALESCE(SUM(CASE WHEN vote = 1 THEN 1 ELSE 0 END), 0), COALESCE(SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END), 0) FROM posts_votes WHERE post_id = $1"
+	err = r.db.QueryRow(query, postId).Scan(&post.Like, &post.Dislike)
+	if err != nil {
+		return nil, err
+	}
+
+	// categories
+	categories := make([]string, 0)
+	query = "SELECT category_name FROM posts_categories WHERE  post_id = $1"
+	rows, err := r.db.Query(query, postId)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var category string
+		err = rows.Scan(&category)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	post.Categories = categories
 	return post, err
 }
 
