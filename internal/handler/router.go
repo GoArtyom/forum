@@ -21,6 +21,8 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.Handle("/post/create", h.authorization(http.HandlerFunc(h.createPostPOST)))
 	
 	mux.Handle("/comment/create", h.authorization(http.HandlerFunc(h.createCommentPOST)))
+
+	mux.Handle("/likeposts", h.authorization(http.HandlerFunc(h.likePostsGET)))
 	
 	mux.HandleFunc("/filterposts", h.filterPostsGET)
 	mux.Handle("/myposts", h.authorization(http.HandlerFunc(h.myPostsGET)))

@@ -29,6 +29,8 @@ func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
+
+	// add like in post
 	post, err := h.service.GetPostById(postId)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -40,6 +42,8 @@ func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
+
+	// add like in comment
 	comments, err := h.service.GetAllCommentByPostId(post.PostId)
 	if err != nil {
 		log.Printf("onePostGET: get all comment by id: %s\n", err.Error())
@@ -75,6 +79,7 @@ func (h *Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// validate title/ content/
+
 	categories := r.Form["categories"]
 	if len(categories) == 0 {
 		log.Println("createPostPOST: incorect len categories")
@@ -82,6 +87,7 @@ func (h *Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// validate categories
+	
 	user := h.getUserFromContext(r)
 	newPost := &models.CreatePost{
 		Title:      r.Form.Get("title"),

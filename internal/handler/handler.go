@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -39,6 +40,28 @@ func (h *Handler) getPostIdFromURL(path string) (int, error) {
 	postId, err := strconv.Atoi(parts[2])
 	if err != nil {
 		return 0, err
+	}
+	return postId, nil
+}
+
+func (h *Handler) getVote(voteStr string) (int, error) {
+	vote, err := strconv.Atoi(voteStr)
+	if err != nil {
+		return 0, err
+	}
+	if vote != 1 && vote != -1 {
+		return 0, errors.New(fmt.Sprintf("incorrect request vote = %d", vote))
+	}
+	return vote, nil
+}
+
+func (h *Handler) getPostIdFromForm(postIdStr string) (int, error) {
+	postId, err := strconv.Atoi(postIdStr)
+	if err != nil {
+		return 0, err
+	}
+	if postId < 1 {
+		return 0, errors.New(fmt.Sprintf("incorrect request postId = %d", postId))
 	}
 	return postId, nil
 }

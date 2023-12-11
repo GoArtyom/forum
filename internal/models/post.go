@@ -22,8 +22,14 @@ type Post struct {
 	Dislike  int       `json:"dislike"`
 }
 
+type PostVote struct {
+	PostId int `json:"post_id"`
+	UserId int `json:"user_id"`
+	Vote   int `json:"vote"`
+}
+
 type Data struct {
-	User       *User        `json:"user"`
+	User       *User       `json:"user"`
 	Post       *Post       `json:"post"`
 	Posts      []*Post     `json:"posts"`
 	Comments   []*Comment  `json:"coments"`

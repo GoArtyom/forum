@@ -5,7 +5,9 @@ import (
 	"forum/internal/repository"
 	"forum/internal/service/category"
 	"forum/internal/service/comment"
+	commentvote "forum/internal/service/commentVote"
 	"forum/internal/service/post"
+	postvote "forum/internal/service/postVote"
 	"forum/internal/service/session"
 	"forum/internal/service/user"
 )
@@ -39,20 +41,32 @@ type Category interface {
 	GetAllCategory() ([]*models.Category, error)
 }
 
+type PostVote interface {
+	CreatePostVote(newVote *models.PostVote) error
+}
+
+type CommentVote interface {
+	CreateCommentVote(newComment *models.CommentVote) error
+}
+
 type Service struct {
 	User
 	Post
 	Comment
 	Session
 	Category
+	PostVote
+	CommentVote
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
-		User:     user.NewUserService(repo),
-		Post:     post.NewPostService(repo),
-		Comment:  comment.NewCommentServer(repo),
-		Session:  session.NewSessionService(repo),
-		Category: category.NewCategoryService(repo),
+		User:        user.NewUserService(repo),
+		Post:        post.NewPostService(repo),
+		Comment:     comment.NewCommentServer(repo),
+		Session:     session.NewSessionService(repo),
+		Category:    category.NewCategoryService(repo),
+		PostVote:    postvote.NewPostVoteService(repo),
+		CommentVote: commentvote.NewCommentVoteService(repo),
 	}
 }
