@@ -16,6 +16,8 @@ type Comment struct {
 	Content  string    `json:"content"`
 	UserId   int       `json:"user_id"`
 	UserName string    `json:"user_name"`
+	Like     int       `json:"like"`
+	Dislike  int       `json:"dislike"`
 	CreateAt time.Time `json:"create_at"`
 }
 

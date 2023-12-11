@@ -2,6 +2,7 @@ package comment
 
 import (
 	"database/sql"
+
 	"forum/internal/models"
 )
 
@@ -38,9 +39,15 @@ func (r *CommentSqlite) GetAllCommentByPostId(postId int) ([]*models.Comment, er
 		if err != nil {
 			return nil, err
 		}
+		// like & dislike
+		query = "SELECT COALESCE(SUM(CASE WHEN vote = 1 THEN 1 ELSE 0 END), 0), COALESCE(SUM(CASE WHEN vote = -1 THEN 1 ELSE 0 END), 0) FROM comments_votes WHERE comment_id = $1"
+		err = r.db.QueryRow(query, comment.Id).Scan(&comment.Like, &comment.Dislike)
+		if err != nil {
+			return nil, err
+		}
 		comments = append(comments, comment)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
