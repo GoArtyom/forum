@@ -2,15 +2,15 @@ package user
 
 import (
 	"forum/internal/models"
-	"forum/internal/repository"
+	repo "forum/internal/repository"
 	"forum/pkg"
 )
 
 type UserService struct {
-	repo repository.User
+	repo repo.User
 }
 
-func NewUserService(repo repository.User) *UserService {
+func NewUserService(repo repo.User) *UserService {
 	return &UserService{repo: repo}
 }
 

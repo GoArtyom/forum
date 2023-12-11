@@ -46,7 +46,7 @@ type PostVote interface {
 }
 
 type CommentVote interface {
-	CreateCommentVote(newComment *models.CommentVote) error
+	CreateCommentVote(newVote *models.CommentVote) error
 }
 
 type Service struct {

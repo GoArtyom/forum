@@ -1,4 +1,4 @@
-package postote
+package postvote
 
 import (
 	"database/sql"
@@ -20,7 +20,7 @@ func (r *PostVoteSqlite) CreatePostVote(newVote *models.PostVote) error {
 	return err
 }
 
-func (r *PostVoteSqlite) GetVoteByUserId(newVote *models.PostVote) (int, error) {
+func (r *PostVoteSqlite) GetVoteByUserIdR(newVote *models.PostVote) (int, error) {
 	var vote int
 
 	query := "SELECT vote FROM posts_votes WHERE post_id = $1 AND user_id = $2"
@@ -28,8 +28,9 @@ func (r *PostVoteSqlite) GetVoteByUserId(newVote *models.PostVote) (int, error) 
 	return vote, err
 }
 
-func (r *PostVoteSqlite) DeleteVoteByUserId(newVote *models.PostVote) error {
+func (r *PostVoteSqlite) DeleteVoteByUserIdR(newVote *models.PostVote) error {
 	query := "DELETE FROM posts_votes WHERE post_id = $1 AND user_id = $2"
 	_, err := r.db.Exec(query, newVote.PostId, newVote.UserId)
 	return err
 }
+

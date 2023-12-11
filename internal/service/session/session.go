@@ -4,16 +4,16 @@ import (
 	"time"
 
 	"forum/internal/models"
-	"forum/internal/repository"
+	repo"forum/internal/repository"
 
 	"github.com/gofrs/uuid"
 )
 
 type SessionService struct {
-	repo repository.Session
+	repo repo.Session
 }
 
-func NewSessionService(repo repository.Session) *SessionService {
+func NewSessionService(repo repo.Session) *SessionService {
 	return &SessionService{repo: repo}
 }
 

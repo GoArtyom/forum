@@ -2,14 +2,14 @@ package comment
 
 import (
 	"forum/internal/models"
-	"forum/internal/repository"
+	repo "forum/internal/repository"
 )
 
 type CommentService struct {
-	repo repository.Comment
+	repo repo.Comment
 }
 
-func NewCommentServer(repo repository.Comment) *CommentService {
+func NewCommentServer(repo repo.Comment) *CommentService {
 	return &CommentService{repo: repo}
 }
 

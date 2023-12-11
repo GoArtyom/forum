@@ -55,13 +55,16 @@ func (h *Handler) getVote(voteStr string) (int, error) {
 	return vote, nil
 }
 
-func (h *Handler) getPostIdFromForm(postIdStr string) (int, error) {
-	postId, err := strconv.Atoi(postIdStr)
+func (h *Handler) getIntFromForm(idStr string) (int, error) {
+	if idStr == "" {
+		return 0, fmt.Errorf("empty value")
+	}
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return 0, err
 	}
-	if postId < 1 {
-		return 0, fmt.Errorf("incorrect request postId = %d", postId)
+	if id < 1 {
+		return 0, fmt.Errorf("incorrect request id = %d", id)
 	}
-	return postId, nil
+	return id, nil
 }

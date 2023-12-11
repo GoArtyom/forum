@@ -46,12 +46,14 @@ type Category interface {
 
 type PostVote interface {
 	CreatePostVote(newVote *models.PostVote) error
-	GetVoteByUserId(newVote *models.PostVote) (int, error)
-	DeleteVoteByUserId(newVote *models.PostVote) error
+	GetVoteByUserIdR(newVote *models.PostVote) (int, error)
+	DeleteVoteByUserIdR(newVote *models.PostVote) error
 }
 
 type CommentVote interface {
 	CreateCommentVote(newVote *models.CommentVote) error
+	GetVoteByUserId(newVote *models.CommentVote) (int, error)
+	DeleteVoteByUserId(newVote *models.CommentVote) error
 }
 
 type Repository struct {

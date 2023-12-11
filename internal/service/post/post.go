@@ -2,14 +2,14 @@ package post
 
 import (
 	"forum/internal/models"
-	"forum/internal/repository"
+	repo "forum/internal/repository"
 )
 
 type PostService struct {
-	repo repository.Post
+	repo repo.Post
 }
 
-func NewPostService(repo repository.Post) *PostService {
+func NewPostService(repo repo.Post) *PostService {
 	return &PostService{repo: repo}
 }
 
