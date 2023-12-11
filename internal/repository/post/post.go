@@ -57,6 +57,7 @@ func (r *PostSqlite) GetPostById(postId int) (*models.Post, error) {
 	err := r.db.QueryRow(query, postId).Scan(&post.PostId, &post.Title, &post.Content, &post.UserId, &post.UserName, &post.CreateAt)
 	return post, err
 }
+
 func (r *PostSqlite) GetAllPost() ([]*models.Post, error) {
 	query := "SELECT * FROM posts"
 	rows, err := r.db.Query(query)
@@ -106,8 +107,32 @@ func (r *PostSqlite) GetPostsByUserId(userId int) ([]*models.Post, error) {
 }
 
 func (r *PostSqlite) GetPostsByCategory(category string) ([]*models.Post, error) {
-	query := "SELECT * FROM posts p JOIN posts_categories c ON p.id = c.post_id  WHERE c.category_name = $1"
+	query := "SELECT p.id, p.title, p.content, p.user_id, p.user_name, p.create_at FROM posts p JOIN posts_categories c ON p.id = c.post_id  WHERE c.category_name = $1"
 	rows, err := r.db.Query(query, category)
+	if err != nil {
+		return nil, err
+	}
+	posts := make([]*models.Post, 0)
+	for rows.Next() {
+		post := new(models.Post)
+		err := rows.Scan(&post.PostId, &post.Title, &post.Content,
+			&post.UserId, &post.UserName, &post.CreateAt)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+func (r *PostSqlite) GetPostsByLike(userId int) ([]*models.Post, error) {
+	query := "SELECT p.id, p.title, p.content, p.user_id, p.user_name, p.create_at FROM posts p JOIN posts_votes pv ON p.id = pv.post_id  WHERE pv.user_id = $1 AND pv.vote = 1"
+	rows, err := r.db.Query(query, userId)
 	if err != nil {
 		return nil, err
 	}

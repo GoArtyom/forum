@@ -24,9 +24,15 @@ func (s *PostService) GetPostById(postId int) (*models.Post, error) {
 func (s *PostService) GetAllPost() ([]*models.Post, error) {
 	return s.repo.GetAllPost()
 }
+
 func (s *PostService) GetPostsByUserId(userId int) ([]*models.Post, error) {
 	return s.repo.GetPostsByUserId(userId)
 }
-func (s *PostService)GetPostsByCategory(category string) ([]*models.Post, error){
+
+func (s *PostService) GetPostsByCategory(category string) ([]*models.Post, error) {
 	return s.repo.GetPostsByCategory(category)
+}
+
+func (s *PostService) GetPostsByLike(userId int) ([]*models.Post, error) {
+	return s.repo.GetPostsByLike(userId)
 }

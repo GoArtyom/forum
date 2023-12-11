@@ -1,17 +1,40 @@
 package handler
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+
+	"forum/internal/models"
+)
 
 func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
-//check path
+	if r.URL.Path != "/likeposts" {
+		log.Printf("likePostsGET: not found %s\n", r.URL.Path)
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
+		return
+	}
+	if r.Method != http.MethodGet {
+		log.Printf("likePostsGET: method not allowed %s\n", r.Method)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
+		return
+	}
 
-//check method
+	user := h.getUserFromContext(r)
 
-//get all category
+	posts, err := h.service.GetPostsByLike(user.Id)
+	if err != nil {
+		log.Printf("likePostsGET: get all post %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		return
+	}
 
-//get user by context
+	err = h.template.ExecuteTemplate(w, "index.html", models.Data{
+		User:       user,
+		Posts:      posts,
+	})
 
-//get like posts user from db
-
-//return page with data
+	if err != nil {
+		log.Printf("likePostsGET: ExecuteTemplate %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+	}
 }

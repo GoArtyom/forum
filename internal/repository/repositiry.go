@@ -23,6 +23,7 @@ type Post interface {
 	GetAllPost() ([]*models.Post, error)
 	GetPostsByUserId(userId int) ([]*models.Post, error)
 	GetPostsByCategory(category string) ([]*models.Post, error)
+	GetPostsByLike(userId int) ([]*models.Post, error)
 }
 
 type Comment interface {
