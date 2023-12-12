@@ -11,6 +11,12 @@ import (
 	"forum/internal/models"
 )
 
+
+
+
+
+
+
 // GET
 func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.Path)
@@ -61,6 +67,10 @@ func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 	}
 }
+
+
+
+
 
 func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.Path)
