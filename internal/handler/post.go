@@ -11,12 +11,6 @@ import (
 	"forum/internal/models"
 )
 
-
-
-
-
-
-
 // GET
 func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.Path)
@@ -68,10 +62,6 @@ func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
-
-
-
 func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/post/create" {
@@ -90,7 +80,7 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 		}
 		// validate title/ content/
 
-		categories := r.Form["categories"]
+		categories := r.PostForm["categories"]
 		if len(categories) == 0 {
 			log.Println("createPostPOST:incorect len categories")
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
