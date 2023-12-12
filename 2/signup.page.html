@@ -1,0 +1,21 @@
+{{template "base" .}} 
+{{define "title"}}Signup{{end}} 
+{{define "body"}}
+<form action="/auth/signup" method="POST" novalidate>
+  <div>
+    <label>Name:</label>
+    <input type="text" name="name" value="" />
+  </div>
+  <div>
+    <label>Email:</label>
+    <input type="email" name="email" value="" />
+  </div>
+  <div>
+    <label>Password:</label>
+    <input type="password" name="password" />
+  </div>
+  <div>
+    <input type="submit" value="Signup" />
+  </div>
+</form>
+{{end}}

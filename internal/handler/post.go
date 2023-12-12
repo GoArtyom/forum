@@ -13,6 +13,7 @@ import (
 
 // GET
 func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.Path)
 	if !strings.HasPrefix(r.URL.Path, "/post/") {
 		log.Printf("onePostGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -50,7 +51,7 @@ func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-	err = h.template.ExecuteTemplate(w, "index.html", &models.Data{
+	err = h.template.ExecuteTemplate(w, "post.html", &models.Data{
 		Post:     post,
 		Comments: comments,
 	})
@@ -61,52 +62,78 @@ func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// POST
-func (h *Handler) createPostPOST(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/post/create" {
-		log.Printf("createPostPOST: not found %s\n", r.URL.Path)
+		log.Printf("createPostGET_POST:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
-	if r.Method != http.MethodPost {
-		log.Printf("createPostPOST: method not allowed %s\n", r.Method)
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
-		return
-	}
-	if err := r.ParseForm(); err != nil {
-		log.Printf("createPostPOST: parse form %s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-		return
-	}
-	// validate title/ content/
+	switch r.Method {
 
-	categories := r.Form["categories"]
-	if len(categories) == 0 {
-		log.Println("createPostPOST: incorect len categories")
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
-		return
-	}
-	// validate categories
+	// POST
+	case http.MethodPost:
+		if err := r.ParseForm(); err != nil {
+			log.Printf("createPostPOST:ParseForm:%s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			return
+		}
+		// validate title/ content/
 
-	user := h.getUserFromContext(r)
-	newPost := &models.CreatePost{
-		Title:      r.Form.Get("title"),
-		Content:    r.Form.Get("content"),
-		UserId:     user.Id,
-		UserName:   user.Name,
-		Categories: categories,
-		CreateAt:   time.Now(),
-	}
-	id, err := h.service.CreatePost(newPost)
-	if err != nil {
-		log.Printf("createPostPOST: create post: %s\n", err.Error())
-		if err.Error() == models.IncorRequest {
+		categories := r.Form["categories"]
+		if len(categories) == 0 {
+			log.Println("createPostPOST:incorect len categories")
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 			return
 		}
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		// validate categories
+
+		user := h.getUserFromContext(r)
+		newPost := &models.CreatePost{
+			Title:      r.Form.Get("title"),
+			Content:    r.Form.Get("content"),
+			UserId:     user.Id,
+			UserName:   user.Name,
+			Categories: categories,
+			CreateAt:   time.Now(),
+		}
+		id, err := h.service.CreatePost(newPost)
+		if err != nil {
+			log.Printf("createPostPOST:CreatePost:%s\n", err.Error())
+			if err.Error() == models.IncorRequest {
+				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+				return
+			}
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			return
+		}
+
+		http.Redirect(w, r, fmt.Sprintf("/post/%d", id), http.StatusSeeOther) // 303
+
+	// GET
+	case http.MethodGet:
+		user := h.getUserFromContext(r)
+
+		categories, err := h.service.GetAllCategory()
+		if err != nil {
+			log.Printf("createPostGET:GetAllCategory:%s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			return
+		}
+
+		err = h.template.ExecuteTemplate(w, "create.html", models.Data{
+			User:       user,
+			Categories: categories,
+		})
+
+		if err != nil {
+			log.Printf("createPostGET:ExecuteTemplate:%s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		}
+
+	default:
+		log.Printf("createPostGET_POST:StatusMethodNotAllowed:%s\n", r.Method)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
-
-	http.Redirect(w, r, fmt.Sprintf("/post/%d", id), http.StatusSeeOther) // 303
 }

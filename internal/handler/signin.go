@@ -11,6 +11,7 @@ import (
 
 // GET
 func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/signin" {
 		log.Printf("signinGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -21,7 +22,7 @@ func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
-	err := h.template.ExecuteTemplate(w, "index.html", fmt.Sprintf("Path:%s\nMethod:%s", r.URL.Path, r.Method))
+	err := h.template.ExecuteTemplate(w, "signin.html", nil)
 	if err != nil {
 		log.Printf("signinGET:ExecuteTemplate:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500

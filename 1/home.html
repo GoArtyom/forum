@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <title>Forum</title>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+            <link rel="stylesheet" href="/static/css/style.css">
+            <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap');
+            </style>
+        </head>
+        <body>
+            <header>
+                <h1><a href='/'>Forum</a></h1>
+            </header>
+            <nav>
+                <div>
+                    <a class="navbutton" href="/">Home</a>
+                    {{if .User}}
+                    <a class="navbutton" href="/post/create">Create Post</a>
+                    <a class="navbutton" href="/likedposts">Liked Posts</a>
+                    {{end}}
+                </div>
+                <div>
+                    {{if .User}}
+                    <a class="navbutton" href="/myposts">My Posts</a>
+                    <form action="/auth/signout" method="POST">
+                        <button type="submit">Signout</button>
+                    </form>
+                    {{else}}
+                    <a class="navbutton" href="/signup">Signup</a>
+                    <a class="navbutton" href="/signin">Signin</a>
+                    {{end}}
+                </div>
+            </nav>
+            <section>
+                <h2>Latest Posts</h2>
+    <div class="btn-group" role="group" aria-label="Categories">
+
+        <a class="btn btn-primary" href="/">All</a>
+        {{range .Categories}}
+        <a class="btn btn-primary" href="/filterposts?category={{.Name}}">{{.Name}}</a>
+        {{end}}
+    </div>
+    {{if .Posts}}
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Created</th>
+            </tr>
+            {{range .Posts}}
+            <tr>
+                <td><a href="/post/{{.PostId}}">{{.Title}}</a></td>
+                <td>{{.UserName}}</td>
+                <td>{{.CreateAt}}</td>
+            </tr>
+            {{end}}
+        </table>
+    {{else}}
+        {{if .User}}
+        <p>There are no posts yet.</p>
+        {{else}}
+        <p>You have a chance to make first post in this Forum!</p>
+        {{end}}
+            </section>
+            <footer>
+                <p>Created by <a href="https://01.alem.school/git/aecheist/forum"> Skynet &copy;</a> in 2023</p>
+            </footer>
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        </body>
+    </html>

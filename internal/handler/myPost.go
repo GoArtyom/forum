@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,6 +10,7 @@ import (
 
 // GET
 func (h *Handler) myPostsGET(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/myposts" {
 		log.Printf("myPostsGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -27,7 +29,7 @@ func (h *Handler) myPostsGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-	err = h.template.ExecuteTemplate(w, "index.html", models.Data{
+	err = h.template.ExecuteTemplate(w, "home.html", models.Data{
 		User:  user,
 		Posts: posts,
 	})

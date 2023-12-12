@@ -18,7 +18,7 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.Handle("/auth/signout", h.authorization(http.HandlerFunc(h.signoutPOST)))
 
 	mux.HandleFunc("/post/", h.onePostGET)
-	mux.Handle("/post/create", h.authorization(http.HandlerFunc(h.createPostPOST)))
+	mux.Handle("/post/create", h.authorization(http.HandlerFunc(h.createPostGET_POST)))
 
 	mux.Handle("/comment/create", h.authorization(http.HandlerFunc(h.createCommentPOST)))
 

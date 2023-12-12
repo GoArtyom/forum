@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/likeposts" {
 		log.Printf("likePostsGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -28,9 +30,9 @@ func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.template.ExecuteTemplate(w, "index.html", models.Data{
-		User:       user,
-		Posts:      posts,
+	err = h.template.ExecuteTemplate(w, "home.html", models.Data{
+		User:  user,
+		Posts: posts,
 	})
 
 	if err != nil {
