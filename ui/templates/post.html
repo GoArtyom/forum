@@ -59,7 +59,7 @@
                             </form>
                         </span>
                         <div class="time-post">
-                            posted {{.CreateAt}} by <b>{{.UserName}}</b>
+                            posted {{.CreateAt.Format "02 January 2006 15:04:05"}} by <b>{{.UserName}}</b>
                         </div>
                     </div>
                     
@@ -101,7 +101,7 @@
                                 </span>
                                 
                                 <div class="time-post">
-                                    {{.CreateAt}}
+                                    {{.CreateAt.Format "02 January 2006 15:04:05"}}
                                 </div>
                             </div>
                         </div>
