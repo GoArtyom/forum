@@ -42,6 +42,7 @@ type Session interface {
 
 type Category interface {
 	GetAllCategory() ([]*models.Category, error)
+	GetCategoryByName(categoryName string) error
 }
 
 type PostVote interface {

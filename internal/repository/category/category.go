@@ -2,6 +2,7 @@ package category
 
 import (
 	"database/sql"
+
 	"forum/internal/models"
 )
 
@@ -34,4 +35,11 @@ func (r *CategorySqlite) GetAllCategory() ([]*models.Category, error) {
 	}
 
 	return categories, nil
+}
+
+func (r *CategorySqlite) GetCategoryByName(categoryName string) error {
+	query := "SELECT name FROM category WHERE name = ?"
+	var name string
+	err := r.db.QueryRow(query, categoryName).Scan(&name)
+	return err
 }

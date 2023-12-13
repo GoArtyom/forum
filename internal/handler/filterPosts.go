@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 
-	"forum/internal/models"
+	"forum/pkg/data"
 )
 
 // GET
@@ -27,6 +28,10 @@ func (h *Handler) filterPostsGET(w http.ResponseWriter, r *http.Request) {
 	posts, err := h.service.GetPostsByCategory(category)
 	if err != nil {
 		log.Printf("filterPostsGET:GetPostsByCategory:%s\n", err.Error())
+		if err == sql.ErrNoRows {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+		return 
+		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
@@ -39,7 +44,7 @@ func (h *Handler) filterPostsGET(w http.ResponseWriter, r *http.Request) {
 
 	user := h.getUserFromContext(r)
 
-	err = h.template.ExecuteTemplate(w, "home.html", &models.Data{
+	err = h.template.ExecuteTemplate(w, "home.html", &data.Data{
 		User:       user,
 		Posts:      posts,
 		Categories: categories,

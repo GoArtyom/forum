@@ -1,16 +1,22 @@
 package post
 
 import (
+	"fmt"
+
 	"forum/internal/models"
 	repo "forum/internal/repository"
 )
 
 type PostService struct {
 	repo repo.Post
+	cat  repo.Category
 }
 
-func NewPostService(repo repo.Post) *PostService {
-	return &PostService{repo: repo}
+func NewPostService(repo *repo.Repository) *PostService {
+	return &PostService{
+		repo: repo.Post,
+		cat:  repo.Category,
+	}
 }
 
 func (s *PostService) CreatePost(post *models.CreatePost) (int, error) {
@@ -30,6 +36,12 @@ func (s *PostService) GetPostsByUserId(userId int) ([]*models.Post, error) {
 }
 
 func (s *PostService) GetPostsByCategory(category string) ([]*models.Post, error) {
+	err := s.cat.GetCategoryByName(category)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
 	return s.repo.GetPostsByCategory(category)
 }
 

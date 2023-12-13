@@ -141,12 +141,14 @@ func (r *PostSqlite) GetPostsByCategory(category string) ([]*models.Post, error)
 	}
 	posts := make([]*models.Post, 0)
 	for rows.Next() {
+		fmt.Println("For")
 		post := new(models.Post)
 		err := rows.Scan(&post.PostId, &post.Title, &post.Content,
 			&post.UserId, &post.UserName, &post.CreateAt)
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println(*post)
 		posts = append(posts, post)
 	}
 
