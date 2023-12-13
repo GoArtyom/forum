@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 	"unicode/utf8"
 
@@ -56,6 +57,25 @@ func (d *Data) ErrLog(s string) {
 	for key, errors := range d.Errors {
 		for _, err := range errors {
 			log.Printf(`%sKey="%s":%s`, s, key, err)
+		}
+	}
+}
+
+var emailRegexp = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+
+func (d *Data) isValid(r *http.Request, key string) {
+	value := r.Form.Get(key)
+	if value == "" {
+		return
+	}
+
+	emailRegexp.MatchString(value)
+	if !emailRegexp.MatchString(value) {
+		switch key {
+		case "email":
+			d.Errors[key] = append(d.Errors[key], models.ErrEmail)
+		case "password":
+			d.Errors[key] = append(d.Errors[key], models.ErrPassword)
 		}
 	}
 }

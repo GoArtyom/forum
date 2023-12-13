@@ -46,7 +46,7 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 	data.ErrLengthMax(r, "content", 1000)
 	if len(data.Errors) != 0 {
 		data.ErrLog("createCommentPOST:")
-		w.WriteHeader(http.StatusBadRequest)
+		// w.WriteHeader(http.StatusBadRequest)
 		http.Redirect(w, r, fmt.Sprintf("/post/%d", postId), http.StatusSeeOther) // 303
 		return
 	}
