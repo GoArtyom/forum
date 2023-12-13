@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"forum/internal/models"
+	"forum/pkg/data"
 )
 
 // GET
@@ -45,7 +46,38 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
+
 	// validate name/ email/ password
+	data := new(data.Data)
+	data.Errors = map[string][]string{}
+	data.ErrEmpty(r, "name", "email", "password")
+	data.ErrLengthMin(r, "name", 5)
+	data.ErrLengthMax(r, "name", 20)
+	data.ErrLengthMin(r, "email", 5)
+	data.ErrLengthMax(r, "email", 40)
+	data.ErrLengthMin(r, "password", 8)
+	data.ErrLengthMax(r, "password", 20)
+	data.IsValid(r, "email", models.EmailRegexp)
+	// data.IsValid(r, "password", models.PasswordRegexp)
+
+	if len(data.Errors) != 0 {
+		w.WriteHeader(http.StatusBadRequest) // 400
+		data.ErrLog("signupPOST:")
+
+		data.User = &models.User{
+			Name:     r.Form.Get("name"),
+			Email:    r.Form.Get("email"),
+			Password: r.Form.Get("password"),
+		}
+
+		err := h.template.ExecuteTemplate(w, "signup.html", data)
+		if err != nil {
+			log.Printf("signupPOST:ExecuteTemplate:%s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		}
+		return
+	}
+
 	user := &models.CreateUser{
 		Name:     r.Form.Get("name"),
 		Email:    r.Form.Get("email"),
@@ -53,13 +85,44 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	err := h.service.CreateUser(user)
 	if err != nil {
-		log.Printf("signupPOST:CreateUser:%s\n", err.Error())
-		if err.Error() == models.UniqueUser.Error() {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+		switch err.Error() {
+		case models.UniqueName:
+			w.WriteHeader(http.StatusBadRequest) // 400
+			data.Errors["name"] = append(data.Errors["name"], "The user with that name has already been registered.")
+			data.ErrLog("signupPOST:")
+			data.User = &models.User{
+				Name:     r.Form.Get("name"),
+				Email:    r.Form.Get("email"),
+				Password: r.Form.Get("password"),
+			}
+
+			err := h.template.ExecuteTemplate(w, "signup.html", data)
+			if err != nil {
+				log.Printf("signupPOST:ExecuteTemplate:%s\n", err.Error())
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			}
+			return
+		case models.UniqueEmail:
+			w.WriteHeader(http.StatusBadRequest) // 400
+			data.Errors["email"] = append(data.Errors["email"], "The user with that email has already been registered.")
+			data.ErrLog("signupPOST:")
+			data.User = &models.User{
+				Name:     r.Form.Get("name"),
+				Email:    r.Form.Get("email"),
+				Password: r.Form.Get("password"),
+			}
+
+			err := h.template.ExecuteTemplate(w, "signup.html", data)
+			if err != nil {
+				log.Printf("signupPOST:ExecuteTemplate:%s\n", err.Error())
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			}
+			return
+		default:
+			log.Printf("signupPOST:CreateUser:%s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 			return
 		}
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-		return
 	}
 	http.Redirect(w, r, "/signin", http.StatusSeeOther) // 303
 }

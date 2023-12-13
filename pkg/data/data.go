@@ -61,16 +61,16 @@ func (d *Data) ErrLog(s string) {
 	}
 }
 
-var emailRegexp = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
-func (d *Data) isValid(r *http.Request, key string) {
+
+func (d *Data) IsValid(r *http.Request, key string, p *regexp.Regexp) {
 	value := r.Form.Get(key)
 	if value == "" {
 		return
 	}
 
-	emailRegexp.MatchString(value)
-	if !emailRegexp.MatchString(value) {
+	p.MatchString(value)
+	if !p.MatchString(value) {
 		switch key {
 		case "email":
 			d.Errors[key] = append(d.Errors[key], models.ErrEmail)

@@ -17,12 +17,7 @@ func NewUserSqlite(db *sql.DB) *UserSqlite {
 func (r *UserSqlite) CreateUser(user *models.CreateUser) error {
 	query := "INSERT INTO users (name, email, password_hash) VALUES($1, $2, $3)"
 	_, err := r.db.Exec(query, user.Name, user.Email, user.Password)
-	if err != nil {
-		if err.Error() == models.UniqueEmail || err.Error() == models.UniqueName {
-			return models.UniqueUser
-		}
-		return err
-	}
+
 	return err
 }
 

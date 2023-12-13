@@ -1,6 +1,9 @@
 package models
 
-import "errors"
+import (
+	"errors"
+	"regexp"
+)
 
 const (
 	UniqueEmail  = "UNIQUE constraint failed: users.email"
@@ -16,6 +19,11 @@ const (
 )
 
 var (
-	UniqueUser = errors.New("unique user")
-	IncorData  = errors.New("incorrect password or email")
+	ErrUniqueUser = errors.New("unique user")
+	IncorData     = errors.New("incorrect password or email")
+)
+
+var (
+	EmailRegexp    = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	// PasswordRegexp = regexp.MustCompile(`^(?=.*\d|.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).{8,}$`)
 )

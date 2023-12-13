@@ -20,26 +20,49 @@
             <nav>
                 <div>
                     <a class="navbutton" href="/">Home</a>
-                    {{if .User}}
-                    <a class="navbutton" href="/post/create">Create Post</a>
-                    <a class="navbutton" href="/likeposts">Liked Posts</a>
-                    {{end}}
                 </div>
                 <div>
-                    {{if .User}}
-                    <a class="navbutton" href="/myposts">My Posts</a>
-                    <form action="/auth/signout" method="POST">
-                        <button type="submit">Signout</button>
-                    </form>
-                    {{else}}
                     <a class="navbutton" href="/signup">Signup</a>
                     <a class="navbutton" href="/signin">Signin</a>
-                    {{end}}
                 </div>
             </nav>
             <section>
+                    {{if .Errors}}
                 <form action="/auth/signup" method="POST" novalidate>
+                    <div>  
+                    {{with .Errors.name}}
+                        {{range .}}
+                    <label class="error">{{.}}</label>
+                        {{end}}
+                    {{end}}  
+                      <label>Name:</label>
+                      <input type="text" name="name" value="{{.User.Name}}" />
+                    </div>
                     <div>
+                    {{with .Errors.email}}
+                        {{range .}}
+                    <label class="error">{{.}}</label>
+                        {{end}}
+                    {{end}}  
+                      <label>Email:</label>
+                      <input type="email" name="email" value="{{.User.Email}}" />
+                    </div>
+                    <div>
+                    {{with .Errors.password}}
+                        {{range .}}
+                    <label class="error">{{.}}</label>
+                        {{end}}
+                    {{end}}  
+                      <label>Password:</label>
+                      <input type="password" name="password" value="{{.User.Password}}" />
+                    </div>
+                    <div>
+                      <input type="submit" value="Signup" />
+                    </div>
+                  </form>
+                  {{else}}
+                  <form action="/auth/signup" method="POST" novalidate>
+                    <div>    
                       <label>Name:</label>
                       <input type="text" name="name" value="" />
                     </div>
@@ -55,6 +78,7 @@
                       <input type="submit" value="Signup" />
                     </div>
                   </form>
+                  {{end}}
             </section>
             <footer>
                 <p>Created by <a href="https://01.alem.school/git/aecheist/forum"> Skynet &copy;</a> in 2023</p>
