@@ -20,7 +20,7 @@ const (
 
 var (
 	ErrUniqueUser = errors.New("unique user")
-	IncorData     = errors.New("incorrect password or email")
+	ErrIncorData     = errors.New("incorrect password or email")
 )
 
 var (

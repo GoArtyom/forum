@@ -1,90 +1,93 @@
-
 <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            <title>Forum</title>
-            <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
-            <link rel="stylesheet" href="/static/css/style.css">
-            <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
-            <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap');
-            </style>
-        </head>
-        <body>
-            <header>
-                <h1><a href='/'>Forum</a></h1>
-            </header>
-            <nav>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Forum</title>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap');
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1><a href='/'>Forum</a></h1>
+    </header>
+    <nav>
+        <div>
+            <a class="navbutton" href="/">Home</a>
+        </div>
+        <div>
+            <a class="navbutton" href="/signup">Signup</a>
+            <a class="navbutton" href="/signin">Signin</a>
+        </div>
+    </nav>
+    <section>
+        {{if .Errors}}
+        <form action="/auth/signup" method="POST" novalidate>
+            <div>
+            {{with .Errors.name}}
+                {{range .}}
+                <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+                <label>Name:</label>
+                <input type="text" name="name" value="{{.User.Name}}" />
+            </div>
+            <div>
+            {{with .Errors.email}}
+                {{range .}}
+                <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+                <label>Email:</label>
+                <input type="email" name="email" value="{{.User.Email}}" />
+            </div>
+            <div>
+            {{with .Errors.password}}
+                {{range .}}
+                <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+                <label>Password:</label>
+                <input type="password" name="password" value="{{.User.Password}}" />
+            </div>
+        {{else}}
+            <form action="/auth/signup" method="POST" novalidate>
                 <div>
-                    <a class="navbutton" href="/">Home</a>
+                    <label>Name:</label>
+                    <input type="text" name="name" value="" />
                 </div>
                 <div>
-                    <a class="navbutton" href="/signup">Signup</a>
-                    <a class="navbutton" href="/signin">Signin</a>
+                    <label>Email:</label>
+                    <input type="email" name="email" value="" />
                 </div>
-            </nav>
-            <section>
-                    {{if .Errors}}
-                <form action="/auth/signup" method="POST" novalidate>
-                    <div>  
-                    {{with .Errors.name}}
-                        {{range .}}
-                    <label class="error">{{.}}</label>
-                        {{end}}
-                    {{end}}  
-                      <label>Name:</label>
-                      <input type="text" name="name" value="{{.User.Name}}" />
-                    </div>
-                    <div>
-                    {{with .Errors.email}}
-                        {{range .}}
-                    <label class="error">{{.}}</label>
-                        {{end}}
-                    {{end}}  
-                      <label>Email:</label>
-                      <input type="email" name="email" value="{{.User.Email}}" />
-                    </div>
-                    <div>
-                    {{with .Errors.password}}
-                        {{range .}}
-                    <label class="error">{{.}}</label>
-                        {{end}}
-                    {{end}}  
-                      <label>Password:</label>
-                      <input type="password" name="password" value="{{.User.Password}}" />
-                    </div>
-                    <div>
-                      <input type="submit" value="Signup" />
-                    </div>
-                  </form>
-                  {{else}}
-                  <form action="/auth/signup" method="POST" novalidate>
-                    <div>    
-                      <label>Name:</label>
-                      <input type="text" name="name" value="" />
-                    </div>
-                    <div>
-                      <label>Email:</label>
-                      <input type="email" name="email" value="" />
-                    </div>
-                    <div>
-                      <label>Password:</label>
-                      <input type="password" name="password" />
-                    </div>
-                    <div>
-                      <input type="submit" value="Signup" />
-                    </div>
-                  </form>
-                  {{end}}
-            </section>
-            <footer>
-                <p>Created by <a href="https://01.alem.school/git/aecheist/forum"> Skynet &copy;</a> in 2023</p>
-            </footer>
-            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        </body>
-    </html>
+                <div>
+                    <label>Password:</label>
+                    <input type="password" name="password" />
+                </div>
+        {{end}}
+                <div>
+                    <input type="submit" value="Signup" />
+                </div>
+            </form>
+    </section>
+    <footer>
+        <p>Created by <a href="https://01.alem.school/git/aecheist/forum"> Skynet &copy;</a> in 2023</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+</html>

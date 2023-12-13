@@ -1,6 +1,8 @@
 package user
 
 import (
+	"database/sql"
+
 	"forum/internal/models"
 	repo "forum/internal/repository"
 	"forum/pkg"
@@ -23,11 +25,15 @@ func (s *UserService) CreateUser(user *models.CreateUser) error {
 func (s *UserService) SignInUser(user *models.SignInUser) (int, error) {
 	repoUser, err := s.repo.GetUserByEmail(user.Email)
 	if err != nil {
-		return 0, models.IncorData
+		if err == sql.ErrNoRows {
+			return 0, models.ErrIncorData
+		} else {
+			return 0, err
+		}
 	}
 
 	if repoUser.Password != pkg.GetPasswordHash(user.Password) {
-		return 0, models.IncorData
+		return 0, models.ErrIncorData
 	}
 	return repoUser.Id, nil
 }
