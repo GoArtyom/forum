@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"forum/internal/models"
+	"forum/pkg/data"
 )
 
 func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +30,7 @@ func (h *Handler) likePostsGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.template.ExecuteTemplate(w, "home.html", models.Data{
+	err = h.template.ExecuteTemplate(w, "home.html", &data.Data{
 		User:  user,
 		Posts: posts,
 	})

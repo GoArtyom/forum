@@ -1,66 +1,14 @@
 package handler
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"forum/internal/models"
+	"forum/pkg/data"
 )
-
-// GET
-func (h *Handler) onePostGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
-	if !strings.HasPrefix(r.URL.Path, "/post/") {
-		log.Printf("onePostGET:StatusNotFound:%s\n", r.URL.Path)
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
-		return
-	}
-	if r.Method != http.MethodGet {
-		log.Printf("onePostGET:StatusMethodNotAllowed:%s\n", r.Method)
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
-		return
-	}
-	postId, err := h.getPostIdFromURL(r.URL.Path)
-	if err != nil {
-		log.Printf("onePostGET:getPostIdFromURL:%s: %s\n", r.URL.Path, err.Error())
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
-		return
-	}
-
-	// add like in post
-	post, err := h.service.GetPostById(postId)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			log.Printf("onePostGET:GetPostById:post not found:%s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
-			return
-		}
-		log.Printf("onePostGET:GetPostById:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-		return
-	}
-
-	// add like in comment
-	comments, err := h.service.GetAllCommentByPostId(post.PostId)
-	if err != nil {
-		log.Printf("onePostGET:GetAllCommentByPostId:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-		return
-	}
-	err = h.template.ExecuteTemplate(w, "post.html", &models.Data{
-		Post:     post,
-		Comments: comments,
-	})
-
-	if err != nil {
-		log.Printf("onePostGET:ExecuteTemplate:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-	}
-}
 
 func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.Path)
@@ -69,6 +17,9 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
+
+	user := h.getUserFromContext(r)
+
 	switch r.Method {
 
 	// POST
@@ -78,7 +29,6 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 			return
 		}
-		// validate title/ content/
 
 		categories := r.PostForm["categories"]
 		if len(categories) == 0 {
@@ -86,9 +36,39 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 			return
 		}
-		// validate categories
 
-		user := h.getUserFromContext(r)
+		// validate title/ content/
+		data := new(data.Data)
+		data.ErrEmpty(r, "title", "content")
+		data.ErrLengthMax(r, "title", 50)
+		data.ErrLengthMin(r, "title", 10)
+		data.ErrLengthMax(r, "content", 2000)
+		
+		if len(data.Errors) != 0 {
+			w.WriteHeader(http.StatusBadRequest) // 400
+			data.ErrLog("createPostPOST:")
+			/////
+			////
+			///
+			//
+			categories, err := h.service.GetAllCategory()
+			if err != nil {
+				log.Printf("createPostGET:GetAllCategory:%s\n", err.Error())
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+				return
+			}
+			data.User = user
+			data.Categories = categories
+
+			err = h.template.ExecuteTemplate(w, "create.html", data)
+
+			if err != nil {
+				log.Printf("createPostGET:ExecuteTemplate:%s\n", err.Error())
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			}
+			return
+		}
+
 		newPost := &models.CreatePost{
 			Title:      r.Form.Get("title"),
 			Content:    r.Form.Get("content"),
@@ -97,6 +77,7 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			Categories: categories,
 			CreateAt:   time.Now(),
 		}
+
 		id, err := h.service.CreatePost(newPost)
 		if err != nil {
 			log.Printf("createPostPOST:CreatePost:%s\n", err.Error())
@@ -112,7 +93,6 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 
 	// GET
 	case http.MethodGet:
-		user := h.getUserFromContext(r)
 
 		categories, err := h.service.GetAllCategory()
 		if err != nil {
@@ -121,7 +101,7 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = h.template.ExecuteTemplate(w, "create.html", models.Data{
+		err = h.template.ExecuteTemplate(w, "create.html", &data.Data{
 			User:       user,
 			Categories: categories,
 		})

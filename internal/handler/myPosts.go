@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"forum/internal/models"
+	"forum/pkg/data"
 )
 
 // GET
@@ -29,7 +29,7 @@ func (h *Handler) myPostsGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-	err = h.template.ExecuteTemplate(w, "home.html", models.Data{
+	err = h.template.ExecuteTemplate(w, "home.html", &data.Data{
 		User:  user,
 		Posts: posts,
 	})

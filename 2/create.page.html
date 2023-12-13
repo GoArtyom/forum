@@ -3,7 +3,7 @@
 {{ define "title"}}Create a New Post{{ end }}
 
 {{define "body"}}
-<form action='/post/create' method='POST' enctype="multipart/form-data">
+<form action='/post/create' method='POST' novalidate>
     {{if .}}
     <div>
         <label>Title:</label>

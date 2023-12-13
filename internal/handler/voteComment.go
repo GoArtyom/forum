@@ -31,13 +31,15 @@ func (h *Handler) createCommentVotePOST(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 		return
 	}
-	postId, err := h.getIntFromForm(r.Form.Get("post_id"))
+
+	postId, err := h.getIntFromForm(r, "post_id")
 	if err != nil {
 		log.Printf("createCommentVotePOST:getIntFromForm():%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 		return
 	}
-	commentId, err := h.getIntFromForm(r.Form.Get("comment_id"))
+
+	commentId, err := h.getIntFromForm(r, "comment_id")
 	if err != nil {
 		log.Printf("createCommentVotePOST:getIntFromForm():%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400

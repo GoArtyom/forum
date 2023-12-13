@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"forum/internal/models"
+	"forum/pkg/data"
 )
 
 func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
@@ -29,16 +30,30 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId, err := h.getIntFromForm(r.Form.Get("post_id"))
+	postId, err := h.getIntFromForm(r, "post_id")
 	if err != nil {
 		log.Printf("createCommentPOST:getIntFromForm():%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
 		return
 	}
-	// validation post id
 
-	// validation content
 	user := h.getUserFromContext(r)
+
+	data := new(data.Data)
+	data.ErrEmpty(r, "content")
+	data.ErrLengthMin(r, "content", 5)
+	data.ErrLengthMax(r, "content", 1000)
+	if len(data.Errors) != 0 {
+		data.ErrLog("createCommentPOST:")
+		w.WriteHeader(http.StatusBadRequest)
+		/////
+		////
+		///
+		//
+		http.Redirect(w, r, fmt.Sprintf("/post/%d", postId), http.StatusSeeOther) // 303
+		return
+	}
+
 	newComment := &models.CreateComment{
 		PostId:   postId,
 		Content:  r.Form.Get("content"),

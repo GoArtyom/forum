@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type CreatePost struct {
 	Title      string    `json:"title"`
@@ -30,10 +32,4 @@ type PostVote struct {
 	Vote   int `json:"vote"`
 }
 
-type Data struct {
-	User       *User       `json:"user"`
-	Post       *Post       `json:"post"`
-	Posts      []*Post     `json:"posts"`
-	Comments   []*Comment  `json:"coments"`
-	Categories []*Category `json:"categories"`
-}
+
