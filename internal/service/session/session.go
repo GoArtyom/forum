@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"forum/internal/models"
-	repo"forum/internal/repository"
+	repo "forum/internal/repository"
 
 	"github.com/gofrs/uuid"
 )
@@ -34,7 +34,7 @@ func (s *SessionService) CreateSession(userId int) (*models.Session, error) {
 	newSession := &models.Session{
 		User_id:  userId,
 		UUID:     uuid.String(),
-		ExpireAt: time.Now().Add(time.Second * 30),
+		ExpireAt: time.Now().Add(time.Hour * 24),
 	}
 
 	err = s.repo.CreateSession(newSession)

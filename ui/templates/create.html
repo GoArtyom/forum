@@ -37,14 +37,53 @@
             </nav>
             <section>
                 <form action='/post/create' method='POST' novalidate>
-                    {{if .}}
+                    {{if .Errors}}
                     <div>
+                        {{with .Errors.title}}
+                            {{range .}}
+                        <label class="error">{{.}}</label>
+                            {{end}}
+                        {{end}}
                         <label>Title:</label>
-                        <input type='text' name='title' value=>
+                        <input type='text' name='title' value="{{.Post.Title}}">
                     </div>
                     <div>
+                        {{with .Errors.content}}
+                            {{range .}}
+                            <label class="error">{{.}}</label>
+                            {{end}}
+                        {{end}}
                         <label>Content:</label>
-                        <textarea name="content"></textarea>
+                        <textarea name="content" maxlength="2000">{{.Post.Content}}</textarea>
+                    </div>
+                    <div>
+                        <div>
+                        {{with .Errors.categories}}
+                            {{range .}}
+                        <label class="error">{{.}}</label>
+                            {{end}}
+                        {{end}}
+                            <label>Category:</label>
+                                {{range .Categories}}
+                                    <div class="ctg">
+                                        <input type="checkbox" name="categories" value="{{.Name}}">
+                                        <label>{{.Name}}</label>
+                                    </div>
+                                {{end}}
+                        </div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Publish post">
+                    </div>
+                    {{else}}
+                    <div>
+                        <label>Title:</label>
+                        <input type='text' name='title' value="">
+                    </div>
+                    <div>
+                        
+                        <label>Content:</label>
+                        <textarea name="content" maxlength="2000"></textarea >
                     </div>
                     <div>
                         <div>

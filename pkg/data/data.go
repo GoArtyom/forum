@@ -55,7 +55,7 @@ func (d *Data) ErrEmpty(r *http.Request, keys ...string) {
 func (d *Data) ErrLog(s string) {
 	for key, errors := range d.Errors {
 		for _, err := range errors {
-			log.Printf(`%sKey="%s":%s\n`, s, key, err)
+			log.Printf(`%sKey="%s":%s`, s, key, err)
 		}
 	}
 }

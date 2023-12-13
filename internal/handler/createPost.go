@@ -30,35 +30,35 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		categories := r.PostForm["categories"]
-		if len(categories) == 0 {
-			log.Println("createPostPOST:incorect len categories")
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
-			return
-		}
-
-		// validate title/ content/
 		data := new(data.Data)
+		data.Errors = map[string][]string{}
+		getCategories := r.PostForm["categories"]
+		if len(getCategories) == 0 {
+			data.Errors["categories"] = append(data.Errors["categories"], "You need to select at least one category.")
+		}
 		data.ErrEmpty(r, "title", "content")
 		data.ErrLengthMax(r, "title", 50)
 		data.ErrLengthMin(r, "title", 10)
 		data.ErrLengthMax(r, "content", 2000)
-		
+
 		if len(data.Errors) != 0 {
 			w.WriteHeader(http.StatusBadRequest) // 400
 			data.ErrLog("createPostPOST:")
-			/////
-			////
-			///
-			//
+		
 			categories, err := h.service.GetAllCategory()
 			if err != nil {
 				log.Printf("createPostGET:GetAllCategory:%s\n", err.Error())
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 				return
 			}
+
 			data.User = user
 			data.Categories = categories
+			data.Post = &models.Post{
+				Title:      r.Form.Get("title"),
+				Content:    r.Form.Get("content"),
+				Categories: getCategories,
+			}
 
 			err = h.template.ExecuteTemplate(w, "create.html", data)
 
@@ -74,7 +74,7 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			Content:    r.Form.Get("content"),
 			UserId:     user.Id,
 			UserName:   user.Name,
-			Categories: categories,
+			Categories: getCategories,
 			CreateAt:   time.Now(),
 		}
 
@@ -101,7 +101,7 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = h.template.ExecuteTemplate(w, "create.html", &data.Data{
+		err = h.template.ExecuteTemplate(w, "create.html", data.Data{
 			User:       user,
 			Categories: categories,
 		})
