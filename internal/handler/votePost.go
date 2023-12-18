@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"forum/internal/models"
 )
 
 func (h *Handler) createPostVotePOST(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/post/vote/create" {
+	if !strings.HasPrefix(r.URL.Path, "/post/vote/create") {
 		log.Printf("createPostVotePOST:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
@@ -50,6 +51,10 @@ func (h *Handler) createPostVotePOST(w http.ResponseWriter, r *http.Request) {
 	err = h.service.PostVote.CreatePostVote(newVote)
 	if err != nil {
 		log.Printf("createPostVotePOST:CreatePostVote:%s\n", err.Error())
+		if err.Error() == models.IncorRequest {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+			return
+		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}

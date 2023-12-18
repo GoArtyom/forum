@@ -16,34 +16,44 @@ import (
 )
 
 func RunServer(cfg *config.Config) {
-	db, err := repo.NewSqliteDB(&repo.Config{
-		Driver: cfg.DB.Driver,
-		Dsn:    cfg.DB.DSN,
-	})
+	db, err := repo.NewSqliteDB(cfg)
 	if err != nil {
-		log.Fatalf("failed to initialize db: %s", err.Error())
+		log.Fatalf("[ERROR]:failed to initialize db: %s\n", err.Error())
+	}
+	err = repo.CreateTable(db, cfg.Migrate)
+	if err != nil {
+		log.Fatalf("[ERROR]:failed creation table: %s\n", err.Error())
 	}
 	repo := repo.NewRepository(db)
 	service := service.NewService(repo)
 	tpl, err := render.NewTemplate()
 	if err != nil {
-		log.Fatalf("failed to parse templates: %s", err.Error())
+		log.Fatalf("[ERROR]:failed to parse templates: %s\n", err.Error())
 	}
 	handler := handler.NewHandler(service, tpl)
-	svr := new(server.Server)
+	srv := new(server.Server)
+
 	go func() {
-		if err := svr.Run(cfg, handler.InitRouters()); err != nil {
-			log.Fatalf("error occured while running http server: %s", err.Error())
+		if err := srv.Run(cfg, handler.InitRouters()); err != nil {
+			log.Printf("[ERROR]:occured while running http server: %s\n", err.Error())
 		}
 	}()
+
+	log.Println("[OK]:listening on: http://localhost" + cfg.Port)
+
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	if err := svr.Shutdown(context.Background()); err != nil {
-		log.Printf("error occured on server shutting down : %s", err.Error())
+	if err := srv.Shutdown(context.Background()); err != nil {
+		log.Printf("[ERROR]:occured on server shutting down : %s", err.Error())
+	} else {
+		log.Println("[OK]:server shutdown was successful")
 	}
+
 	if err := db.Close(); err != nil {
-		log.Printf("error occured on db connection close : %s", err.Error())
+		log.Printf("[ERROR]:occured on db connection close : %s", err.Error())
+	} else {
+		log.Println("[OK]:db shutdown was successful")
 	}
 }

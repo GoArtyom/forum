@@ -1,8 +1,6 @@
 package post
 
 import (
-	"fmt"
-
 	"forum/internal/models"
 	repo "forum/internal/repository"
 )
@@ -38,7 +36,6 @@ func (s *PostService) GetPostsByUserId(userId int) ([]*models.Post, error) {
 func (s *PostService) GetPostsByCategory(category string) ([]*models.Post, error) {
 	err := s.cat.GetCategoryByName(category)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 

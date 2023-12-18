@@ -31,6 +31,7 @@ func (h *Handler) signoutPOST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
+	
 	pkg.DeleteCookie(w)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)

@@ -1,17 +1,16 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	"forum/internal/models"
-	"forum/pkg/data"
+	"forum/internal/render"
+	"forum/pkg/form"
 )
 
 // GET
 func (h *Handler) signupGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/signup" {
 		log.Printf("signupGET:StatusNotFound%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -22,11 +21,8 @@ func (h *Handler) signupGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
-	err := h.template.ExecuteTemplate(w, "signup.html", nil)
-	if err != nil {
-		log.Printf("signupGET:ExecuteTemplate:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-	}
+
+	h.renderPage(w, "signup.html", &render.Data{})
 }
 
 // POST
@@ -48,33 +44,25 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate name/ email/ password
-	data := new(data.Data)
-	data.Errors = map[string][]string{}
-	data.ErrEmpty(r, "name", "email", "password")
-	data.ErrLengthMin(r, "name", 5)
-	data.ErrLengthMax(r, "name", 20)
-	data.ErrLengthMin(r, "email", 5)
-	data.ErrLengthMax(r, "email", 40)
-	data.ErrLengthMin(r, "password", 8)
-	data.ErrLengthMax(r, "password", 20)
-	data.IsValid(r, "email", models.EmailRegexp)
-	// data.IsValid(r, "password", models.PasswordRegexp)
+	form := form.New(r)
+	form.Errors = map[string][]string{}
+	form.ErrEmpty("name", "email", "password")
+	form.ErrLengthMin("name", 5)
+	form.ErrLengthMax("name", 20)
+	form.ErrLengthMin("email", 5)
+	form.ErrLengthMax("email", 40)
+	form.ErrLengthMin("password", 8)
+	form.ErrLengthMax("password", 20)
+	form.ValidEmail("email")
+	form.ValidPassword("password")
 
-	if len(data.Errors) != 0 {
+	if len(form.Errors) != 0 {
 		w.WriteHeader(http.StatusBadRequest) // 400
-		data.ErrLog("signupPOST:")
+		form.ErrLog("signupPOST:")
 
-		data.User = &models.User{
-			Name:     r.Form.Get("name"),
-			Email:    r.Form.Get("email"),
-			Password: r.Form.Get("password"),
-		}
-
-		err := h.template.ExecuteTemplate(w, "signup.html", data)
-		if err != nil {
-			log.Printf("signupPOST:ExecuteTemplate:%s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-		}
+		h.renderPage(w, "signup.html", &render.Data{
+			Form: form,
+		})
 		return
 	}
 
@@ -87,42 +75,22 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err.Error() {
 		case models.UniqueName:
-			w.WriteHeader(http.StatusBadRequest) // 400
-			data.Errors["name"] = append(data.Errors["name"], "The user with that name has already been registered.")
-			data.ErrLog("signupPOST:")
-			data.User = &models.User{
-				Name:     r.Form.Get("name"),
-				Email:    r.Form.Get("email"),
-				Password: r.Form.Get("password"),
-			}
-
-			err := h.template.ExecuteTemplate(w, "signup.html", data)
-			if err != nil {
-				log.Printf("signupPOST:ExecuteTemplate:%s\n", err.Error())
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-			}
-			return
+			form.Errors["name"] = append(form.Errors["name"], "The user with that name has already been registered.")
 		case models.UniqueEmail:
-			w.WriteHeader(http.StatusBadRequest) // 400
-			data.Errors["email"] = append(data.Errors["email"], "The user with that email has already been registered.")
-			data.ErrLog("signupPOST:")
-			data.User = &models.User{
-				Name:     r.Form.Get("name"),
-				Email:    r.Form.Get("email"),
-				Password: r.Form.Get("password"),
-			}
-
-			err := h.template.ExecuteTemplate(w, "signup.html", data)
-			if err != nil {
-				log.Printf("signupPOST:ExecuteTemplate:%s\n", err.Error())
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-			}
-			return
+			form.Errors["email"] = append(form.Errors["email"], "The user with that email has already been registered.")
 		default:
 			log.Printf("signupPOST:CreateUser:%s\n", err.Error())
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 			return
 		}
+		w.WriteHeader(http.StatusBadRequest) // 400
+		form.ErrLog("signupPOST:")
+
+		h.renderPage(w, "signup.html", &render.Data{
+			Form: form,
+		})
+		return
 	}
+
 	http.Redirect(w, r, "/signin", http.StatusSeeOther) // 303
 }

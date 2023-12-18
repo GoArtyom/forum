@@ -2,9 +2,8 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-size: 20px;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 400;
+    font-size: 18px;
+    font-family: 'DM Mono', monospace;
   }
   
   html, body {
@@ -13,8 +12,8 @@
   
   body {
     line-height: 1.6;
-    background-color: #FFFFFF;
-    color: #34495E;
+    background-color: #303030;
+    color: #ffffff;
     overflow-y: scroll;
   }
   
@@ -30,8 +29,7 @@
   }
   
   h1 a {
-    font-size: 36px;
-    font-weight: bold;
+    font-size: 32px;
     background-image: url("/static/assets/forum.png");
     background-repeat: no-repeat;
     background-position: 0px 4px;
@@ -39,10 +37,21 @@
     padding-left: 50px;
     position: relative;
   }
+  b{
+    margin-left: 8px;
+    font-weight: 100;
+    color: #21ff00;
+    float: right;
+  }
   
+  input{
+    color: #FFFFFF;
+    background-color:#0f2b46;
+    border: 1px solid #7e7e7e76;
+  }
   h1 a:hover {
     text-decoration: none;
-    color: #021f00;
+    color: #ffffff;
   }
   
   h2 {
@@ -50,10 +59,11 @@
     margin-bottom: 36px;
     position: relative;
     top: -5px;
+    font-weight: 100;
   }
   
   a {
-    color: #000000;
+    color: #21ff00;
     text-decoration: none;
   }
   
@@ -64,22 +74,21 @@
   .ctg{
     margin-bottom: 0px;
   }
-  input{
-    border-radius: 4px;
-  }
+
   .post_comment_create{
-    background-color: #939393;
-    color: #FFFFFF;
+    background-color: #ffffff;
+    color: #0f2b46;
     width: 54px;
     height: 38px;
-    border-radius: 4px;
+  
   }
   
   textarea, input:not([type="submit"]) {
     resize: none;
     font-size: 18px;
-    font-family: 'Oswald', sans-serif;
+    font-family: 'DM Mono', monospace;
     font-weight: 300;
+    border: 1px solid #7e7e7e76;
   }
   
   header {
@@ -93,18 +102,19 @@
   }
   
   header a {
-    color: #34495E;
+    color: #21ff00;
     text-decoration: none;
+    font-weight: 100;
   }
   
   nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid #bebebe3e;
+    border-bottom: 1px  solid #ffffff4f;
     padding-top: 17px;
     padding-bottom: 15px;
-    background: #939393;
+    background: #0f2b46;
     height: 60px;
     color: #6A6C6F; 
   }
@@ -166,28 +176,23 @@
   }
   
   a.button, input[type="submit"] {
-    background-color: #939393;
+    background-color: #0f2b46;
+    border: 1px solid #7e7e7e76;
     color: #FFFFFF;
     padding: 5px 20px;
-    border: none;
     display: inline-block;
-
-    font-weight: 700;
   }
   
   a.button:hover, input[type="submit"]:hover {
-    color: #7979be;
+   color: #21ff00;;
     text-decoration: none;
     cursor: pointer;
+    border: 1px solid #7e7e7e76;
   }
   
   form div {
     margin-bottom: 18px;
   }
-  
-  /* form div:last-child {
-    border-top: 1px dashed #7e7e7e76;
-  } */
   
   form input[type="radio"] {
     position: relative;
@@ -204,7 +209,6 @@
     color: #6A6C6F;
     background: #FFFFFF;
     border: 1px solid #7e7e7e76;
-    border-radius: 10px;
   }
   
   form label {
@@ -213,9 +217,9 @@
   }
   
   .error {
-    color: #C0392B;
-    font-weight: bold;
+    color: #ff1212;
     display: block;
+    font-weight: 500;
   }
   
   .error + textarea, .error + input {
@@ -239,7 +243,7 @@
   }
   
   nav button:hover {
-    color: #7979be;
+    color: #21ff00;
     text-decoration: none;
     cursor: pointer;
   }
@@ -255,50 +259,51 @@
   }
   
   button:hover {
-    color: #7979be;
+    color: #21ff00;
     text-decoration: none;
     cursor: pointer;
   }
   
   .snippet {
-    background-color: #FFFFFF;
+    background-color:#0f2b46;
     border: 1px solid #7e7e7e76;
-    border-radius: 10px;
   }
+
   .btn-group{
     margin-bottom: 10px;
 
   }
   .btn {
     padding: 2px 6px;
-    margin-right: 3px;
-    border-radius: 4px;
+    margin-right: -6px;
     color: #FFFFFF;
-    background-color: #939393;
+    background-color: #0f2b46;
+    border: 1px solid #ffffff4f;
   }
   .btn:hover{
-    color: #7979be;
+    color: #21ff00;
     text-decoration: none;
     cursor: pointer;
   }
   
   .snippet pre {
     padding: 20px;
-    border-top: 1px solid #7e7e7e76;
     border-bottom: 1px solid #7e7e7e76;
-    font-family: 'Oswald', sans-serif;
+    font-family: 'DM Mono', monospace;
     font-weight: 300;
     white-space: pre-line;
     word-wrap: break-word;
-    margin-bottom: 0;
   }
   
   .snippet .metadata {
-    background-color: #dbdbdb;
-    color: #6A6C6F;
-    border-radius: 10px;
+    background-color: #0f2b46;
+    color: #b1b1b1;
     padding: 0.75em 18px;
     overflow: auto;
+    border-bottom: 1px solid #7e7e7e76;
+  }
+  span{
+    margin-right: 5px;
   }
   
   .snippet .metadata span {
@@ -323,8 +328,8 @@
   }
   
   .snippet .comment {
-    background-color: #FFFFFF;
-    color: #6A6C6F;
+    background-color: #0f2b46;
+    color: #92969a;
     padding: 2px 18px 2px 18px;
     overflow: auto;
   }
@@ -352,7 +357,6 @@
   
   div.flash {
     color: #FFFFFF;
-    font-weight: bold;
     background-color: #34495E;
     padding: 18px;
     margin-bottom: 36px;
@@ -364,13 +368,12 @@
     background-color: #C0392B;
     padding: 18px;
     margin-bottom: 36px;
-    font-weight: bold;
     text-align: center;
   }
   
   table {
-    background: #FFFFFF;
-    border: 1px solid #7e7e7e76;
+    background: #0f2b46;
+    border: 1px solid #ffffff57;
     border-collapse: collapse;
     width: 100%;
   }
@@ -378,6 +381,7 @@
   td, th {
     text-align: left;
     padding: 9px 18px;
+    font-weight: 100;
   }
   
   th:last-child, td:last-child {
@@ -386,20 +390,20 @@
   }
   
   tr {
-    border-bottom: 1px solid #7e7e7e76;
+    border-bottom: 1px solid #ffffff57;
   }
   
   tr:nth-child(2n) {
-    background-color: #FFFFFF;
+    background-color: #0f2b46;
   }
   
   footer {
-    border-top: 1px solid #7e7e7e76;
+    border-top: 1px solid #ffffff57;
     padding-top: 17px;
     padding-bottom: 15px;
-    background: #FFFFFF;
+    background: #0f2b46;
     height: 60px;
-    color: #6A6C6F;
+    color: #ffffff;
     text-align: center;
   }
   
@@ -407,10 +411,6 @@
     float: right;
   }
   
-  .comments_show {
-    border: solid rgb(241, 241, 241);
-    border-radius:10px;  
-  }
   
   .post-img {
     display: flex;
@@ -434,7 +434,7 @@
     margin-right: 0.5em;
   }
   .navbutton:hover{
-    color: #7979be;
+    color: #21ff00
   }
   
   .logo_sso_button {
@@ -443,7 +443,6 @@
     cursor: pointer;
     text-decoration: none;
     border: none;
-    border-radius: 10px;
     padding: 0.5em;
     margin: 0.5em;
     margin-left: -2px;

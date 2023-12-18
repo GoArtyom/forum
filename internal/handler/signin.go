@@ -1,18 +1,17 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	"forum/internal/models"
+	"forum/internal/render"
 	"forum/pkg"
-	"forum/pkg/data"
+	"forum/pkg/form"
 )
 
 // GET
 func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/signin" {
 		log.Printf("signinGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -23,11 +22,8 @@ func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
-	err := h.template.ExecuteTemplate(w, "signin.html", nil)
-	if err != nil {
-		log.Printf("signinGET:ExecuteTemplate:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-	}
+
+	h.renderPage(w, "signin.html", &render.Data{})
 }
 
 // POST
@@ -49,27 +45,23 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate name/ email/ password
-	data := new(data.Data)
-	data.Errors = map[string][]string{}
-	data.ErrEmpty(r, "email", "password")
-	data.ErrLengthMin(r, "email", 5)
-	data.ErrLengthMax(r, "email", 40)
-	data.ErrLengthMin(r, "password", 8)
-	data.ErrLengthMax(r, "password", 20)
-	data.IsValid(r, "email", models.EmailRegexp)
+	form := form.New(r)
+	form.Errors = map[string][]string{}
+	form.ErrEmpty("email", "password")
+	form.ErrLengthMin("email", 5)
+	form.ErrLengthMax("email", 40)
+	form.ErrLengthMin("password", 8)
+	form.ErrLengthMax("password", 20)
+	form.ValidEmail("email")
+	form.ValidPassword("password")
 
-	if len(data.Errors) != 0 {
+	if len(form.Errors) != 0 {
 		w.WriteHeader(http.StatusBadRequest) // 400
-		data.ErrLog("signinPOST:")
-		data.User = &models.User{
-			Email:     r.Form.Get("email"),
-			Password: r.Form.Get("password"),
-		}
-		err := h.template.ExecuteTemplate(w, "signin.html", data)
-		if err != nil {
-			log.Printf("signinPOST:ExecuteTemplate:%s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-		}
+		form.ErrLog("signinPOST:")
+
+		h.renderPage(w, "signin.html", &render.Data{
+			Form: form,
+		})
 		return
 	}
 
@@ -77,22 +69,17 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 		Email:    r.Form.Get("email"),
 		Password: r.Form.Get("password"),
 	}
+
 	userId, err := h.service.SignInUser(user)
 	if err != nil {
 		if err == models.ErrIncorData {
 			w.WriteHeader(http.StatusBadRequest) // 400
-			data.Errors["email"] = append(data.Errors["email"], "Email or password is incorrect.")
-			data.ErrLog("signupPOST:")
-			data.User = &models.User{
-				Email:    r.Form.Get("email"),
-				Password: r.Form.Get("password"),
-			}
+			form.Errors["email"] = append(form.Errors["email"], "Email or password is incorrect.")
+			form.ErrLog("signupPOST:")
 
-			err := h.template.ExecuteTemplate(w, "signin.html", data)
-			if err != nil {
-				log.Printf("signupPOST:ExecuteTemplate:%s\n", err.Error())
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-			}
+			h.renderPage(w, "signin.html", &render.Data{
+				Form: form,
+			})
 			return
 		}
 		log.Printf("signinPOST:SignInUser:%s\n", err.Error())

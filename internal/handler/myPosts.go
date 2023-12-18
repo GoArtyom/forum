@@ -1,16 +1,14 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
-	"forum/pkg/data"
+	"forum/internal/render"
 )
 
 // GET
 func (h *Handler) myPostsGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/myposts" {
 		log.Printf("myPostsGET:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -29,13 +27,9 @@ func (h *Handler) myPostsGET(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-	err = h.template.ExecuteTemplate(w, "home.html", &data.Data{
+
+	h.renderPage(w, "home.html", &render.Data{
 		User:  user,
 		Posts: posts,
 	})
-
-	if err != nil {
-		log.Printf("myPostsGET:ExecuteTemplate:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-	}
 }

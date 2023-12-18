@@ -1,73 +1,52 @@
-
-<!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            <title>Forum</title>
-            <link rel="stylesheet" href="/static/css/style.css">
-            <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap');
-            </style>
-        </head>
-        <body>
-            <header>
-                <h1><a href='/'>Forum</a></h1>
-            </header>
-            <nav>
-                <div>
-                    <a class="navbutton" href="/">Home</a>
-                    {{if .User}}
-                    <a class="navbutton" href="/post/create">Create Post</a>
-                    <a class="navbutton" href="/likeposts">Liked Posts</a>
-                    {{end}}
-                </div>
-                <div>
-                    {{if .User}}
-                    <a class="navbutton" href="/myposts">My Posts</a>
-                    <form action="/auth/signout" method="POST">
-                        <button type="submit">Signout</button>
-                    </form>
-                    {{else}}
-                    <a class="navbutton" href="/signup">Signup</a>
-                    <a class="navbutton" href="/signin">Signin</a>
-                    {{end}}
-                </div>
-            </nav>
+{{template "base" .}}
             <section>
                 {{with .Post}}
                 <div class='snippet'>
                     <div class='metadata'>
-                        <strong class="left">{{.Title}}</strong>
+                        <b class="left">{{.Title}}</b>
                         <span class="right">#{{.PostId}}</span>
+                        <span class="right">{Categories:</span>
+                        {{range .Categories}}
+                        <span class="right">{{.}}</span>
+                        {{end}}
+                        <span class="right">}</span>
                     </div>
                         <pre>{{.Content}}</pre>
                     <div class='metadata'>
                         <span>
-                            <form method="POST" action="/post/vote/create">
+                            <form method="POST" action="/post/vote/create#like">
                                 <input type="hidden" name="post_id" value="{{.PostId}}">
                                 <input type="hidden" name="vote" value=1>
-                                <button type="submit"><img src="/static/img/like.svg" style="width: 30px ;" alt="like button"> {{.Like}}  </button>
+                                <button  id="like" type="submit"><img src="/static/img/like.png" style="width: 30px ;" alt="like button"> {{.Like}}  </button>
                             </form>
                         </span>
                         <span>
-                            <form method="POST" action="/post/vote/create">
+                            <form method="POST" action="/post/vote/create#dislike">
                                 <input type="hidden" name="post_id" value="{{.PostId}}">
                                 <input type="hidden" name="vote" value=-1>
-                                <button type="submit"><img src="/static/img/dislike.svg" style="width: 30px ;" alt="dislike button"> {{.Dislike}}</button>
+                                <button id="dislike" type="submit"><img src="/static/img/dislike.png" style="width: 30px ;" alt="dislike button"> {{.Dislike}}</button>
                             </form>
                         </span>
                         <div class="time-post">
-                            posted {{.CreateAt.Format "02 January 2006 15:04:05"}} by <b>{{.UserName}}</b>
+                            posted {{.CreateAt.Format "02/01/2006 15:04"}} by<b>{{.UserName}}</b>
                         </div>
                     </div>
-                    
+                {{end}}
+                {{if .User}}    
                     <div class="comments">
                         <div class="comments_create">
                             <form method="POST" action="/comment/create">
-                                <input type="hidden" name="post_id" value={{.PostId}}>
-                                <textarea name="content" maxlength="280" placeholder="Введите комментарий"></textarea>
+                                <input type="hidden" name="post_id" value={{.Post.PostId}}>
+                            {{if .Form}}
+                                {{with .Form.Errors.content}}
+                                    {{range .}}
+                                    <label class="error">{{.}}</label>
+                                    {{end}}
+                                 {{end}}
+                                 <textarea name="content" placeholder="Enter a comment...">{{.Form.DataForErr.Content}}</textarea>
+                            {{else}}
+                                <textarea name="content" placeholder="Enter a comment..."></textarea>
+                            {{end}}
                                 <div class='metadata'>
                                     <span>
                                         <button type="submit" class="post_comment_create">Send</button>
@@ -75,45 +54,38 @@
                                 </div>
                             </form>
                         </div>
-                {{end}}
+                {{end}}       
                 {{range .Comments}}
                 <div class="comments_show">
                             <div class='comment'>
-                                <strong>{{.UserName}}</strong>
+                                <b>{{.UserName}}</b>
                             </div>
                             <pre><code>{{.Content}}</code></pre>
-                            <div class='comment'>
+                            <div id="{{.Id}}" class='comment'>
                                 <span>
-                                    <form method="POST" action="/comment/vote/create">
+                                    <form method="POST" action="/comment/vote/create#{{.Id}}">
                                         <input type="hidden" name="post_id" value="{{.PostId}}">
                                         <input type="hidden" name="comment_id" value="{{.Id}}">
                                         <input type="hidden" name="vote" value=1>
-                                        <button type="submit"><img src="/static/img/like.svg" style="width: 25px ;" alt="like button"> {{.Like}}</button>
+                                        <button type="submit"><img src="/static/img/like.png" style="width: 25px ;" alt="like button"> {{.Like}}</button>
                                     </form>
                                 </span>
                                 <span>
-                                    <form method="POST" action="/comment/vote/create">
+                                    <form method="POST" action="/comment/vote/create#{{.Id}}">
                                         <input type="hidden" name="post_id" value="{{.PostId}}">
                                         <input type="hidden" name="comment_id" value="{{.Id}}">
                                         <input type="hidden" name="vote" value=-1>
-                                        <button type="submit"><img src="/static/img/dislike.svg" style="width: 25px ;" alt="dislike button"> {{.Dislike}}</button>
+                                        <button type="submit"><img src="/static/img/dislike.png" style="width: 25px ;" alt="dislike button"> {{.Dislike}}</button>
                                     </form>
                                 </span>
                                 
                                 <div class="time-post">
-                                    {{.CreateAt.Format "02 January 2006 15:04:05"}}
+                                    {{.CreateAt.Format "02/01/2006 15:04"}}
                                 </div>
                             </div>
                         </div>
-                            {{end}}
+                {{end}}
                     </div>
                 </div>
             </section>
-            <footer>
-                <p>Created by <a href="https://01.alem.school/git/aecheist/forum"> Skynet &copy;</a> in 2023</p>
-            </footer>
-            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        </body>
-    </html>
+            {{template "footer" .}}

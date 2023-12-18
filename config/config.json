@@ -1,5 +1,6 @@
 {
     "port": ":8081",
+    "migrate":"./migrations/init.sql",
     "db":{
         "driver":"sqlite3",
         "dsn" :"forum.sqlite3"

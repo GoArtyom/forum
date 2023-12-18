@@ -3,11 +3,11 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"forum/internal/models"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
-
-	"forum/internal/models"
 )
 
 func (h *Handler) getUserFromContext(r *http.Request) *models.User {
@@ -23,17 +23,24 @@ func (h *Handler) getPostIdFromURL(path string) (int, error) {
 	if len(parts) != 3 {
 		return 0, errors.New("incorrect path")
 	}
+	rx := regexp.MustCompile(`^[^0,+,-]{1,}\d*$`)
+	if !rx.MatchString(parts[2]) {
+		return 0, fmt.Errorf("incorrect request vote = %s", parts[2])
+	}
+
 	postId, err := strconv.Atoi(parts[2])
 	if err != nil {
 		return 0, err
 	}
-	if postId < 1 {
-		return 0, errors.New("post id is less than 1")
-	}
+
 	return postId, nil
 }
 
 func (h *Handler) getVote(voteStr string) (int, error) {
+	rx := regexp.MustCompile(`^[^0,+]{1,}\d*$`)
+	if !rx.MatchString(voteStr) {
+		return 0, fmt.Errorf("incorrect request vote = %s", voteStr)
+	}
 	vote, err := strconv.Atoi(voteStr)
 	if err != nil {
 		return 0, err
@@ -46,15 +53,16 @@ func (h *Handler) getVote(voteStr string) (int, error) {
 
 func (h *Handler) getIntFromForm(r *http.Request, key string) (int, error) {
 	value := r.Form.Get(key)
-	if value == "" {
-		return -1, fmt.Errorf(`empty value="%s"`, key)
+
+	rx := regexp.MustCompile(`^[^0,+,-]{1,}\d*$`)
+	if !rx.MatchString(value) {
+		return 0, fmt.Errorf("incorrect request vote = %s", value)
 	}
+
 	id, err := strconv.Atoi(value)
 	if err != nil {
 		return 0, err
 	}
-	if id < 1 {
-		return 0, fmt.Errorf(`in the variable %[1]s the value is less than one. "%[1]s"=%[2]d`, key, id)
-	}
+
 	return id, nil
 }

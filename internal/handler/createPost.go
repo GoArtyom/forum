@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"forum/internal/models"
-	"forum/pkg/data"
+	"forum/internal/render"
+	"forum/pkg/form"
 )
 
 func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/post/create" {
 		log.Printf("createPostGET_POST:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
@@ -30,21 +30,20 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		data := new(data.Data)
-		data.Errors = map[string][]string{}
+		form := form.New(r)
 		getCategories := r.PostForm["categories"]
 		if len(getCategories) == 0 {
-			data.Errors["categories"] = append(data.Errors["categories"], "You need to select at least one category.")
+			form.Errors["categories"] = append(form.Errors["categories"], "You need to select at least one category.")
 		}
-		data.ErrEmpty(r, "title", "content")
-		data.ErrLengthMax(r, "title", 50)
-		data.ErrLengthMin(r, "title", 10)
-		data.ErrLengthMax(r, "content", 2000)
+		form.ErrEmpty("title", "content")
+		form.ErrLengthMax("title", 50)
+		form.ErrLengthMin("title", 10)
+		form.ErrLengthMax("content", 5000)
 
-		if len(data.Errors) != 0 {
+		if len(form.Errors) != 0 {
 			w.WriteHeader(http.StatusBadRequest) // 400
-			data.ErrLog("createPostPOST:")
-		
+			form.ErrLog("createPostPOST:")
+
 			categories, err := h.service.GetAllCategory()
 			if err != nil {
 				log.Printf("createPostGET:GetAllCategory:%s\n", err.Error())
@@ -52,15 +51,11 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			data.User = user
-			data.Categories = categories
-			data.Post = &models.Post{
-				Title:      r.Form.Get("title"),
-				Content:    r.Form.Get("content"),
-				Categories: getCategories,
-			}
-
-			err = h.template.ExecuteTemplate(w, "create.html", data)
+			err = h.template.ExecuteTemplate(w, "create.html", render.Data{
+				User:       user,
+				Categories: categories,
+				Form:       form,
+			})
 
 			if err != nil {
 				log.Printf("createPostGET:ExecuteTemplate:%s\n", err.Error())
@@ -100,16 +95,10 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 			return
 		}
-
-		err = h.template.ExecuteTemplate(w, "create.html", data.Data{
+		h.renderPage(w, "create.html", &render.Data{
 			User:       user,
 			Categories: categories,
 		})
-
-		if err != nil {
-			log.Printf("createPostGET:ExecuteTemplate:%s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
-		}
 
 	default:
 		log.Printf("createPostGET_POST:StatusMethodNotAllowed:%s\n", r.Method)

@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"forum/internal/models"
-	"forum/pkg/data"
+	"forum/internal/render"
+	"forum/pkg/form"
 )
 
 func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
@@ -39,15 +40,38 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 
 	user := h.getUserFromContext(r)
 
-	data := new(data.Data)
-	data.Errors = map[string][]string{}
-	data.ErrEmpty(r, "content")
-	data.ErrLengthMin(r, "content", 5)
-	data.ErrLengthMax(r, "content", 1000)
-	if len(data.Errors) != 0 {
-		data.ErrLog("createCommentPOST:")
-		// w.WriteHeader(http.StatusBadRequest)
-		http.Redirect(w, r, fmt.Sprintf("/post/%d", postId), http.StatusSeeOther) // 303
+	form := form.New(r)
+	form.ErrEmpty("content")
+	form.ErrLengthMin("content", 5)
+	form.ErrLengthMax("content", 1000)
+
+	if len(form.Errors) != 0 {
+		form.ErrLog("createCommentPOST:")
+		w.WriteHeader(http.StatusBadRequest)
+		post, err := h.service.GetPostById(postId)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				log.Printf("onePostGET:GetPostById:post not found:%s\n", err.Error())
+				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+				return
+			}
+			log.Printf("onePostGET:GetPostById:%s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			return
+		}
+
+		comments, err := h.service.GetAllCommentByPostId(post.PostId)
+		if err != nil {
+			log.Printf("onePostGET:GetAllCommentByPostId:%s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			return
+		}
+		h.renderPage(w, "post.html", &render.Data{
+			User:     user,
+			Post:     post,
+			Comments: comments,
+			Form:     form,
+		})
 		return
 	}
 
@@ -70,6 +94,5 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
-
 	http.Redirect(w, r, fmt.Sprintf("/post/%d", postId), http.StatusSeeOther) // 303
 }

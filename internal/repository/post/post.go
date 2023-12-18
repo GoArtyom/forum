@@ -2,7 +2,6 @@ package post
 
 import (
 	"database/sql"
-	"fmt"
 
 	"forum/internal/models"
 )
@@ -18,7 +17,6 @@ func NewPostSqlite(db *sql.DB) *PostSqlite {
 func (r *PostSqlite) CreatePost(post *models.CreatePost) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
-		fmt.Println("Err1")
 		return 0, err
 	}
 
@@ -26,24 +24,20 @@ func (r *PostSqlite) CreatePost(post *models.CreatePost) (int, error) {
 
 	result, err := tx.Exec(query, post.Title, post.Content, post.UserId, post.UserName, post.CreateAt)
 	if err != nil {
-		fmt.Println("Err2")
 		tx.Rollback()
 		return 0, err
 	}
 
 	postId, err := result.LastInsertId()
 	if err != nil {
-		fmt.Println("Err3")
 		tx.Rollback()
 		return 0, err
 	}
 
-	query = "INSERT INTO posts_categories (post_id, category_name) VALUES ($1, $2) "
+	query = "INSERT INTO posts_categories (post_id, category_name) VALUES ($1, $2)"
 	for _, category := range post.Categories {
-		fmt.Printf("postId:%d category:%s\n", postId, category)
 		_, err := tx.Exec(query, postId, category)
 		if err != nil {
-			fmt.Println("Err4")
 			tx.Rollback()
 			return 0, err
 		}
@@ -141,14 +135,12 @@ func (r *PostSqlite) GetPostsByCategory(category string) ([]*models.Post, error)
 	}
 	posts := make([]*models.Post, 0)
 	for rows.Next() {
-		fmt.Println("For")
 		post := new(models.Post)
 		err := rows.Scan(&post.PostId, &post.Title, &post.Content,
 			&post.UserId, &post.UserName, &post.CreateAt)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(*post)
 		posts = append(posts, post)
 	}
 

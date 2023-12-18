@@ -4,21 +4,24 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"forum/internal/models"
 )
 
 func (h *Handler) createCommentVotePOST(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/comment/vote/create" {
+	if !strings.HasPrefix(r.URL.Path, "/comment/vote/create") {
 		log.Printf("createCommentVotePOST:StatusNotFound:%s\n", r.URL.Path)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
 		return
 	}
+
 	if r.Method != http.MethodPost {
 		log.Printf("createCommentVotePOST:StatusMethodNotAllowed:%s\n", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
 		return
 	}
+
 	if err := r.ParseForm(); err != nil {
 		log.Printf("createCommentVotePOST:ParseForm:%s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
@@ -57,6 +60,10 @@ func (h *Handler) createCommentVotePOST(w http.ResponseWriter, r *http.Request) 
 	err = h.service.CommentVote.CreateCommentVote(newVote)
 	if err != nil {
 		log.Printf("createCommentVotePOST:CreatePostVote:%s\n", err.Error())
+		if err.Error() == models.IncorRequest {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+			return
+		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
 		return
 	}
