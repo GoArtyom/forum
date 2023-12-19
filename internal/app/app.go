@@ -30,7 +30,7 @@ func RunServer(cfg *config.Config) {
 	if err != nil {
 		log.Fatalf("[ERROR]:failed to parse templates: %s\n", err.Error())
 	}
-	handler := handler.NewHandler(service, tpl)
+	handler := handler.NewHandler(service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
 	srv := new(server.Server)
 
 	go func() {

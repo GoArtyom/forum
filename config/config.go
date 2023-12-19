@@ -7,12 +7,26 @@ import (
 )
 
 type Config struct {
-	Port string `json:"port"`
+	Port    string `json:"port"  env-default:":8080"`
 	Migrate string `json:"migrate"`
-	DB   struct {
+	DB      struct {
 		Driver string `json:"driver"`
 		DSN    string `json:"dsn"`
 	}
+	GoogleConfig GoogleConfig `json:"google_config"`
+	GithubConfig GithubConfig `json:"github_config"`
+}
+
+type GoogleConfig struct {
+	ClientID     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	RedirectURL  string `json:"redirect_url"`
+}
+
+type GithubConfig struct {
+	ClientID     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	RedirectURL  string `json:"redirect_url"`
 }
 
 func InitConfig(path string) *Config {

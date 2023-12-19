@@ -5,19 +5,24 @@ import (
 	"log"
 	"net/http"
 
+	"forum/config"
 	"forum/internal/render"
 	"forum/internal/service"
 )
 
 type Handler struct {
-	service  *service.Service
-	template *template.Template
+	service      *service.Service
+	template     *template.Template
+	gooleConfig  config.GoogleConfig
+	githubConfig config.GithubConfig
 }
 
-func NewHandler(service *service.Service, tpl *template.Template) *Handler {
+func NewHandler(service *service.Service, tpl *template.Template, googleCfg config.GoogleConfig, githubCfg config.GithubConfig) *Handler {
 	return &Handler{
-		service:  service,
-		template: tpl,
+		service:      service,
+		template:     tpl,
+		gooleConfig:  googleCfg,
+		githubConfig: githubCfg,
 	}
 }
 
