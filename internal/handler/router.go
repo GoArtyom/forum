@@ -16,7 +16,7 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.HandleFunc("/auth/signup", h.signupPOST)
 
 	mux.HandleFunc("/auth/google/signin", h.signinGoogle)
-	mux.HandleFunc("/auth/google/callback", h.callbackGoogle)
+	mux.HandleFunc("/google/callback", h.callbackGoogle)
 
 	mux.Handle("/auth/signout", h.authorization(http.HandlerFunc(h.signoutPOST)))
 

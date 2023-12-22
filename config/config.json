@@ -1,18 +1,18 @@
 {
     "port": ":8080",
-    "migrate":"./migrations/init.sql",
-    "db":{
-        "driver":"sqlite3",
-        "dsn" :"forum.sqlite3"
+    "migrate": "./migrations/init.sql",
+    "db": {
+        "driver": "sqlite3",
+        "dsn": "forum.sqlite3"
     },
-    "google_config":{
-        "client_id":"878303262715-4ekg3488n826kuhjvmlmptgrti6adkle.apps.googleusercontent.com",
-        "client_secret":"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",
-        "redirect_url":"http://localhost:8080/auth/google/callback"
+    "google_config": {
+        "client_id": "",
+        "client_secret": "",
+        "redirect_url": "http://localhost:8080/google/callback"
     },
-    "github_config":{
-        "client_id":"",
-        "client_secret":"",
-        "redirect_url":"http://localhost:8080/auth/github/callback"
+    "github_config": {
+        "client_id": "",
+        "client_secret": "",
+        "redirect_url": "http://localhost:8080/auth/github/callback"
     }
 }

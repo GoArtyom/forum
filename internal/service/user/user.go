@@ -41,3 +41,7 @@ func (s *UserService) SignInUser(user *models.SignInUser) (int, error) {
 func (s *UserService) GetUserByUserId(userId int) (*models.User, error) {
 	return s.repo.GetUserByUserId(userId)
 }
+
+func (s UserService) GetUserByEmail(email string) (*models.User, error) {
+	return s.repo.GetUserByEmail(email)
+}

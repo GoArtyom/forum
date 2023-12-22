@@ -16,6 +16,7 @@ type User interface {
 	CreateUser(user *models.CreateUser) error
 	SignInUser(user *models.SignInUser) (int, error)
 	GetUserByUserId(userId int) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 }
 
 type Post interface {

@@ -1,13 +1,15 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"forum/internal/models"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"forum/internal/models"
 )
 
 func (h *Handler) getUserFromContext(r *http.Request) *models.User {
@@ -65,4 +67,25 @@ func (h *Handler) getIntFromForm(r *http.Request, key string) (int, error) {
 	}
 
 	return id, nil
+}
+
+func getValueFromBody(body []byte, key string) string {
+	var data map[string]interface{}
+	err := json.Unmarshal(body, &data)
+	if err != nil {
+		return ""
+	}
+	res, ok := data[key].(string)
+	if !ok {
+		return ""
+	}
+	return res
+}
+
+func getUserInfo(body []byte, userInfo *models.UserInfoOAuth) error {
+	err := json.Unmarshal(body, &userInfo)
+	if err != nil {
+		return err
+	}
+	return nil
 }

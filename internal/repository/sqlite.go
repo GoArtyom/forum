@@ -3,11 +3,11 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"forum/config"
 	"os"
 	"strings"
 	"time"
+
+	"forum/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -42,7 +42,6 @@ func CreateTable(db *sql.DB, migrate string) error {
 	}
 	requests := strings.Split(string(file), ";")
 	for _, request := range requests {
-		fmt.Println(request)
 		_, err := tx.Exec(request)
 		if err != nil {
 			tx.Rollback()
