@@ -15,26 +15,26 @@ import (
 func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/comment/create" {
 		log.Printf("createCommentPOST:StatusNotFound:%s\n", r.URL.Path)
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
+		h.renderError(w, http.StatusNotFound) // 404
 		return
 	}
 
 	if r.Method != http.MethodPost {
 		log.Printf("createCommentPOST:StatusMethodNotAllowed:%s\n", r.Method)
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
+		h.renderError(w, http.StatusMethodNotAllowed) // 405
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
 		log.Printf("createCommentPOST:ParseForm:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		h.renderError(w, http.StatusBadRequest) // 400
 		return
 	}
 
 	postId, err := h.getIntFromForm(r, "post_id")
 	if err != nil {
 		log.Printf("createCommentPOST:getIntFromForm():%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+		h.renderError(w, http.StatusBadRequest) // 400
 		return
 	}
 
@@ -52,18 +52,18 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if err == sql.ErrNoRows {
 				log.Printf("onePostGET:GetPostById:post not found:%s\n", err.Error())
-				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+				h.renderError(w, http.StatusBadRequest) // 400
 				return
 			}
 			log.Printf("onePostGET:GetPostById:%s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			h.renderError(w, http.StatusInternalServerError) // 500
 			return
 		}
 
 		comments, err := h.service.GetAllCommentByPostId(post.PostId)
 		if err != nil {
 			log.Printf("onePostGET:GetAllCommentByPostId:%s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+			h.renderError(w, http.StatusInternalServerError) // 500
 			return
 		}
 		h.renderPage(w, "post.html", &render.Data{
@@ -87,11 +87,11 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("createCommentPOST:CreateComment:post not found:%s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest) // 400
+			h.renderError(w, http.StatusBadRequest) // 400
 			return
 		}
 		log.Printf("createCommentPOST:CreateComment:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("/post/%d", postId), http.StatusSeeOther) // 303

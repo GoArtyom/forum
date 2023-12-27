@@ -11,20 +11,23 @@
                         {{end}}
                         <span class="right">}</span>
                     </div>
+                        {{with .Image}}
+                            <img class="post_image" src="/static/img/{{.Name}}.{{.Type}}" alt="content_photo">
+                        {{end}}
                         <pre>{{.Content}}</pre>
                     <div class='metadata'>
                         <span>
                             <form method="POST" action="/post/vote/create#like">
                                 <input type="hidden" name="post_id" value="{{.PostId}}">
                                 <input type="hidden" name="vote" value=1>
-                                <button  id="like" type="submit"><img src="/static/img/like.png" style="width: 30px ;" alt="like button"> {{.Like}}  </button>
+                                <button  id="like" type="submit"><img class="vote" src="/static/img/like.png"  alt="like button"> {{.Like}}  </button>
                             </form>
                         </span>
                         <span>
                             <form method="POST" action="/post/vote/create#dislike">
                                 <input type="hidden" name="post_id" value="{{.PostId}}">
                                 <input type="hidden" name="vote" value=-1>
-                                <button id="dislike" type="submit"><img src="/static/img/dislike.png" style="width: 30px ;" alt="dislike button"> {{.Dislike}}</button>
+                                <button id="dislike" type="submit"><img  class="vote" src="/static/img/dislike.png"  alt="dislike button"> {{.Dislike}}</button>
                             </form>
                         </span>
                         <div class="time-post">
@@ -67,7 +70,7 @@
                                         <input type="hidden" name="post_id" value="{{.PostId}}">
                                         <input type="hidden" name="comment_id" value="{{.Id}}">
                                         <input type="hidden" name="vote" value=1>
-                                        <button type="submit"><img src="/static/img/like.png" style="width: 25px ;" alt="like button"> {{.Like}}</button>
+                                        <button type="submit"><img class="vote_comment" src="/static/img/like.png"  alt="like button"> {{.Like}}</button>
                                     </form>
                                 </span>
                                 <span>
@@ -75,7 +78,7 @@
                                         <input type="hidden" name="post_id" value="{{.PostId}}">
                                         <input type="hidden" name="comment_id" value="{{.Id}}">
                                         <input type="hidden" name="vote" value=-1>
-                                        <button type="submit"><img src="/static/img/dislike.png" style="width: 25px ;" alt="dislike button"> {{.Dislike}}</button>
+                                        <button type="submit"><img class="vote_comment" src="/static/img/dislike.png"  alt="dislike button"> {{.Dislike}}</button>
                                     </form>
                                 </span>
                                 

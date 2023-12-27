@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -82,10 +83,10 @@ func getValueFromBody(body []byte, key string) string {
 	return res
 }
 
-func getUserInfo(body []byte, userInfo *models.UserInfoOAuth) error {
-	err := json.Unmarshal(body, &userInfo)
+func getValueFromURL(body string, key string) string {
+	valuer, err := url.ParseQuery(body)
 	if err != nil {
-		return err
+		return ""
 	}
-	return nil
+	return valuer.Get(key)
 }

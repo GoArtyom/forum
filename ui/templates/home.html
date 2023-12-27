@@ -1,34 +1,33 @@
 {{template "base" .}}
-            <section>
-                <h2>Latest Posts</h2>
-    <div class="btn-group" role="group" aria-label="Categories">
-
-        <a class="btn btn-primary" href="/">All</a>
-        {{range .Categories}}
-        <a class="btn btn-primary" href="/filterposts?category={{.Name}}">{{.Name}}</a>
-        {{end}}
-    </div>
-    {{if .Posts}}
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Created</th>
-            </tr>
-            {{range .Posts}}
-            <tr>
-                <td><a href="/post/{{.PostId}}">{{.Title}}</a></td>
-                <td>{{.UserName}}</td>
-                <td>{{.CreateAt.Format "02/01/2006"}}</td>
-            </tr>
-            {{end}}
-        </table>
-    {{else}}
-        {{if .User}}
-        <p>There are no posts yet.</p>
-        {{else}}
-        <p>You have a chance to make first post in this Forum!</p>
-        {{end}}
-    {{end}}    
-            </section>
+<section>
+  <h2>Latest Posts</h2>
+  <div class="btn-group" role="group" aria-label="Categories">
+    <a class="btn btn-primary" href="/">All</a>
+    {{range .Categories}}
+    <a class="btn btn-primary" href="/filterposts?category={{.Name}}"
+      >{{.Name}}</a
+    >
+    {{end}}
+  </div>
+  {{if .Posts}}
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Created</th>
+    </tr>
+    {{range .Posts}}
+    <tr>
+      <td><a href="/post/{{.PostId}}">{{.Title}}</a></td>
+      <td>{{.UserName}}</td>
+      <td>{{.CreateAt.Format "02/01/2006"}}</td>
+    </tr>
+    {{end}}
+  </table>
+  {{else}} {{if .User}}
+  <p>There are no posts yet.</p>
+  {{else}}
+  <p>You have a chance to make first post in this Forum!</p>
+  {{end}} {{end}}
+</section>
 {{template "footer" .}}

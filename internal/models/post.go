@@ -21,6 +21,7 @@ type Post struct {
 	UserName   string     `json:"user_name"`
 	CreateAt   time.Time  `json:"create_at"`
 	Categories []string   `json:"categories"`
+	Image      *Image      `json:"image"`
 	Comments   []*Comment `json:"comments"`
 	Like       int        `json:"like"`
 	Dislike    int        `json:"dislike"`
@@ -31,5 +32,3 @@ type PostVote struct {
 	UserId int `json:"user_id"`
 	Vote   int `json:"vote"`
 }
-
-

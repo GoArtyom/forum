@@ -9,7 +9,7 @@ type CommentService struct {
 	repo repo.Comment
 }
 
-func NewCommentServer(repo repo.Comment) *CommentService {
+func NewCommentService(repo repo.Comment) *CommentService {
 	return &CommentService{repo: repo}
 }
 
@@ -18,5 +18,12 @@ func (s *CommentService) CreateComment(comment *models.CreateComment) error {
 }
 
 func (s *CommentService) GetAllCommentByPostId(postId int) ([]*models.Comment, error) {
-	return s.repo.GetAllCommentByPostId(postId)
+	comments, err := s.repo.GetAllCommentByPostId(postId)
+	if err != nil {
+		return nil, err
+	}
+	for i, j := 0, len(comments)-1; i < j; i, j = i+1, j-1 {
+		comments[i], comments[j] = comments[j], comments[i]
+	}
+	return comments, nil
 }

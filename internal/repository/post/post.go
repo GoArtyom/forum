@@ -46,7 +46,7 @@ func (r *PostSqlite) CreatePost(post *models.CreatePost) (int, error) {
 }
 
 func (r *PostSqlite) GetPostById(postId int) (*models.Post, error) {
-	post := &models.Post{}
+	post := &models.Post{Image: nil}
 	query := "SELECT * FROM posts WHERE id = $1"
 	err := r.db.QueryRow(query, postId).Scan(&post.PostId, &post.Title, &post.Content, &post.UserId, &post.UserName, &post.CreateAt)
 	if err != nil {
@@ -173,4 +173,10 @@ func (r *PostSqlite) GetPostsByLike(userId int) ([]*models.Post, error) {
 	}
 
 	return posts, nil
+}
+
+func (r *PostSqlite) DeletePostById(postId int) error {
+	query := "DELETE FROM posts WHERE id = ?"
+	_, err := r.db.Exec(query, postId)
+	return err
 }

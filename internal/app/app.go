@@ -30,14 +30,16 @@ func RunServer(cfg *config.Config) {
 	if err != nil {
 		log.Fatalf("[ERROR]:failed to parse templates: %s\n", err.Error())
 	}
-	handler := handler.NewHandler(service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
+	handlers := handler.NewHandler(service, tpl, cfg.GoogleConfig, cfg.GithubConfig)
 	srv := new(server.Server)
 
 	go func() {
-		if err := srv.Run(cfg, handler.InitRouters()); err != nil {
+		if err := srv.Run(cfg, handlers.InitRouters()); err != nil {
 			log.Printf("[ERROR]:occured while running http server: %s\n", err.Error())
 		}
 	}()
+
+	go handler.CleanupVisitors()
 
 	log.Println("[OK]:listening on: http://localhost" + cfg.Port)
 

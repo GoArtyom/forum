@@ -1,12 +1,9 @@
+![01-edu-system-blue](https://raw.githubusercontent.com/GoArtyom/study/1a66b22c5b511ccce94b582481a45dfd7f001d3a/alem.svg)
 
-# Forum
+# Forum-Security
 
-This project consists in creating a web forum that allows :
+This project follows the same [principles](https://01.alem.school/git/root/public/src/branch/master/subjects/forum/README.md) as the first project (forum).
 
-- communication between users.
-- associating categories to posts.
-- liking and disliking posts and comments.
-- filtering posts.
 
 ## ER Diagram
 
@@ -15,13 +12,13 @@ This project consists in creating a web forum that allows :
 ## Clone repository
 
 ```bash
-    git clone git@git.01.alem.school:aecheist/forum.git
+git clone git@git.01.alem.school:aecheist/forum-security.git
 ```
 
 ## Move to the direcroty
 
 ```bash
-    cd forum
+cd forum-image-security
 ```
 
 ## Run Locally
@@ -43,15 +40,15 @@ with docker
 
 ```bash
     docker build -t forum .
-    docker run -p 8081:8081 forum
+    docker run -p 8080:8080 forum
 ```
 
 server will run on the next route
 
 ```
-    http://localhost:8081
+    http://localhost:8080
 ```
 
 ## Audit list
 
-<a href="https://01.alem.school/git/root/public/src/branch/master/subjects/forum/audit" target="_blank">forum audit</a>
+<a href="https://01.alem.school/git/root/public/src/branch/master/subjects/forum/security/audit" target="_blank">forum-security audit</a>

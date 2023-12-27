@@ -1,6 +1,6 @@
 {{template "base" .}}
             <section>
-                <form action='/post/create' method='POST' novalidate>
+                <form method='POST' enctype="multipart/form-data" >
                     {{if .Form}}
                     <div>
                         {{with .Form.Errors.title}}
@@ -18,7 +18,15 @@
                             {{end}}
                         {{end}}
                         <label>Content:</label>
-                        <textarea name="content" maxlength="2000">{{.Form.DataForErr.Content}}</textarea>
+                        <textarea name="content">{{.Form.DataForErr.Content}}</textarea>
+                    </div>
+                    {{with .Form.Errors.img}}
+                            {{range .}}
+                        <label class="error">{{.}}</label>
+                            {{end}}
+                        {{end}}
+                    <div>
+                        <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
                     </div>
                     <div>
                         <div>
@@ -47,7 +55,10 @@
                     <div>
                         
                         <label>Content:</label>
-                        <textarea name="content" maxlength="2000"></textarea >
+                        <textarea name="content" ></textarea >
+                    </div>
+                    <div>
+                        <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
                     </div>
                     <div>
                         <div>

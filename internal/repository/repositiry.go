@@ -7,6 +7,7 @@ import (
 	"forum/internal/repository/category"
 	"forum/internal/repository/comment"
 	commentvote "forum/internal/repository/commentVote"
+	"forum/internal/repository/image"
 	"forum/internal/repository/post"
 	postvote "forum/internal/repository/postVote"
 	"forum/internal/repository/session"
@@ -17,6 +18,7 @@ type User interface {
 	CreateUser(user *models.CreateUser) error
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByUserId(userId int) (*models.User, error)
+	UpdateUserNameById(userId int, newName string) error
 }
 
 type Post interface {
@@ -26,6 +28,7 @@ type Post interface {
 	GetPostsByUserId(userId int) ([]*models.Post, error)
 	GetPostsByCategory(category string) ([]*models.Post, error)
 	GetPostsByLike(userId int) ([]*models.Post, error)
+	DeletePostById(postId int) error
 }
 
 type Comment interface {
@@ -57,6 +60,12 @@ type CommentVote interface {
 	DeleteVoteByUserId(newVote *models.CommentVote) error
 }
 
+type Image interface {
+	CreateImageByPostId(newImage *models.CreateImage) error
+	DeleteImageByPostId(postId int) error
+	GetImageByPostId(postId int) (*models.Image, error)
+}
+
 type Repository struct {
 	User
 	Post
@@ -65,6 +74,7 @@ type Repository struct {
 	Category
 	PostVote
 	CommentVote
+	Image
 }
 
 func NewRepository(db *sql.DB) *Repository {
@@ -76,5 +86,6 @@ func NewRepository(db *sql.DB) *Repository {
 		Category:    category.NewCategorySqlite(db),
 		PostVote:    postvote.NewPostVoteSqlite(db),
 		CommentVote: commentvote.NewCommentVoteSqlite(db),
+		Image:       image.NewImageSqlite(db),
 	}
 }

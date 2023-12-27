@@ -14,12 +14,12 @@ import (
 func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/signin" {
 		log.Printf("signinGET:StatusNotFound:%s\n", r.URL.Path)
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
+		h.renderError(w, http.StatusNotFound) // 404
 		return
 	}
 	if r.Method != http.MethodGet {
 		log.Printf("signinGET:StatusMethodNotAllowed:%s\n", r.Method)
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
+		h.renderError(w, http.StatusMethodNotAllowed) // 405
 		return
 	}
 
@@ -30,17 +30,17 @@ func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/auth/signin" {
 		log.Printf("signinPOST:StatusNotFound:%s\n", r.URL.Path)
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound) // 404
+		h.renderError(w, http.StatusNotFound) // 404
 		return
 	}
 	if r.Method != http.MethodPost {
 		log.Printf("signinPOST:StatusMethodNotAllowed:%s\n", r.Method)
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed) // 405
+		h.renderError(w, http.StatusMethodNotAllowed) // 405
 		return
 	}
 	if err := r.ParseForm(); err != nil {
 		log.Printf("signinPOST:ParseForm:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		h.renderError(w, http.StatusBadRequest) // 400
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Printf("signinPOST:SignInUser:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 
 	}
@@ -91,11 +91,11 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 	session, err := h.service.CreateSession(userId)
 	if err != nil {
 		log.Printf("signinPOST:CreateSession:%s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError) // 500
+		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
 
-	pkg.SetCookie(w, session.UUID, session.ExpireAt)
+	pkg.SetCookie(w, "UUID", session.UUID, session.ExpireAt)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther) // 303
 }

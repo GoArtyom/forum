@@ -18,6 +18,9 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.HandleFunc("/auth/google/signin", h.signinGoogle)
 	mux.HandleFunc("/google/callback", h.callbackGoogle)
 
+	mux.HandleFunc("/auth/github/signin", h.signinGithub)
+	mux.HandleFunc("/github/callback", h.callbackGithub)
+
 	mux.Handle("/auth/signout", h.authorization(http.HandlerFunc(h.signoutPOST)))
 
 	mux.HandleFunc("/post/", h.onePostGET)
@@ -32,5 +35,5 @@ func (h *Handler) InitRouters() http.Handler {
 	mux.Handle("/myposts", h.authorization(http.HandlerFunc(h.myPostsGET)))
 	mux.Handle("/likeposts", h.authorization(http.HandlerFunc(h.likePostsGET)))
 
-	return h.sessionMiddleware(mux)
+	return h.recoverPanic(h.secureHeaders(h.sessionMiddleware(h.limit(5, 5, mux))))
 }

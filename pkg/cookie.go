@@ -5,43 +5,32 @@ import (
 	"time"
 )
 
-func SetCookie(w http.ResponseWriter, value string, expire_at time.Time) {
+func SetCookie(w http.ResponseWriter, name, value string, expire_at time.Time) {
 	cookie := &http.Cookie{
-		Name:     "UUID",
+		Name:     name,
 		Value:    value,
+		HttpOnly: true,
 		Path:     "/",
 		Expires:  expire_at,
-		HttpOnly: true,
 	}
 	http.SetCookie(w, cookie)
 }
 
-func GetCookie(r *http.Request) (*http.Cookie, error) {
-	cookie, err := r.Cookie("UUID")
+func GetCookie(r *http.Request, name string) (*http.Cookie, error) {
+	cookie, err := r.Cookie(name)
 	if err != nil {
 		return nil, err
 	}
 	return cookie, nil
 }
 
-func DeleteCookie(w http.ResponseWriter) {
+func DeleteCookie(w http.ResponseWriter, name string) {
 	cookie := &http.Cookie{
-		Name:     "UUID",
+		Name:     name,
 		Value:    "",
 		HttpOnly: true,
 		Path:     "/",
 		MaxAge:   -1,
-	}
-	http.SetCookie(w, cookie)
-}
-
-func SetStateCookie(w http.ResponseWriter, state string) {
-	cookie := &http.Cookie{
-		Name:     "state",
-		Value:    state,
-		Path:     "/",
-		MaxAge:   int(time.Hour.Seconds()),
-		HttpOnly: true,
 	}
 	http.SetCookie(w, cookie)
 }

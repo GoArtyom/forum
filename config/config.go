@@ -9,6 +9,8 @@ import (
 type Config struct {
 	Port    string `json:"port"  env-default:":8080"`
 	Migrate string `json:"migrate"`
+	TLSCart string `json:"tls_cert"`
+	TLSKey  string `json:"tls_key"`
 	DB      struct {
 		Driver string `json:"driver"`
 		DSN    string `json:"dsn"`

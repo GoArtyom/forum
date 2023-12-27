@@ -3,11 +3,10 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"forum/config"
 	"os"
 	"strings"
 	"time"
-
-	"forum/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )

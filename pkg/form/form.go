@@ -2,12 +2,14 @@ package form
 
 import (
 	"fmt"
-	"forum/internal/models"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"regexp"
 	"strings"
 	"unicode/utf8"
+
+	"forum/internal/models"
 )
 
 type Form struct {
@@ -37,7 +39,7 @@ func (f *Form) ErrLengthMax(key string, length int) {
 	}
 
 	if utf8.RuneCountInString(value) > length {
-		err := fmt.Sprintf("This fielf is too long. Maximum is %d characters.", length)
+		err := fmt.Sprintf("This field is too long. Maximum is %d characters", length)
 		f.Errors[key] = append(f.Errors[key], err)
 	}
 }
@@ -45,7 +47,7 @@ func (f *Form) ErrLengthMax(key string, length int) {
 func (f *Form) ErrLengthMin(key string, length int) {
 	value := f.Request.Form.Get(key)
 	if utf8.RuneCountInString(value) < length {
-		err := fmt.Sprintf("This field is too short. Minimum is %d characters.", length)
+		err := fmt.Sprintf("This field is too short. Minimum is %d characters", length)
 		f.Errors[key] = append(f.Errors[key], err)
 	}
 }
@@ -53,10 +55,13 @@ func (f *Form) ErrLengthMin(key string, length int) {
 func (f *Form) ErrEmpty(keys ...string) {
 	for _, key := range keys {
 		value := f.Request.Form.Get(key)
-		value = strings.TrimSpace(value)
-		if len(value) == 0 {
-			f.Errors[key] = append(f.Errors[key], "This field is empty.")
+		valueWithoutSpace := strings.TrimSpace(value)
+		if len(valueWithoutSpace) == 0 {
+			f.Errors[key] = append(f.Errors[key], "This field is empty")
+		} else if value != valueWithoutSpace {
+			f.Errors[key] = append(f.Errors[key], "This field has extra spaces")
 		}
+
 	}
 }
 
@@ -80,9 +85,9 @@ func (f *Form) ValidPassword(key string) {
 	value := f.Request.Form.Get(key)
 	patterns := map[string]string{
 		`[!@#$%^&*]`: "Contains at least one of the following special characters: !@#$%^&*",
-		`\d`:         "Contains at least one number.",
-		`[A-Z]`:      "Contains at least one uppercase letter.",
-		`[a-z]`:      "Contains at least one lowercase letter.",
+		`\d`:         "Contains at least one number",
+		`[A-Z]`:      "Contains at least one uppercase letter",
+		`[a-z]`:      "Contains at least one lowercase letter",
 	}
 
 	for pattern, err := range patterns {
@@ -91,4 +96,17 @@ func (f *Form) ValidPassword(key string) {
 			f.Errors[key] = append(f.Errors[key], err)
 		}
 	}
+}
+
+func (f *Form) ErrImg(h *multipart.FileHeader) {
+
+	if h.Size > 20<<20 {
+		f.Errors["img"] = append(f.Errors["img"], "File size exceeds 20 MB")
+	}
+	nameSplit := strings.Split(h.Filename, ".")
+	mime := strings.ToLower(nameSplit[len(nameSplit)-1])
+	if len(nameSplit) != 2 || (mime != "gif" && mime != "png" && mime != "jpg" && mime != "jpeg") {
+		f.Errors["img"] = append(f.Errors["img"], "Invalid file type ."+mime+" (use JPEG, JPG, PNG, GIF)")
+	}
+
 }

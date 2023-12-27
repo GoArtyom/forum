@@ -45,3 +45,7 @@ func (s *PostService) GetPostsByCategory(category string) ([]*models.Post, error
 func (s *PostService) GetPostsByLike(userId int) ([]*models.Post, error) {
 	return s.repo.GetPostsByLike(userId)
 }
+
+func (s *PostService) DeletePostById(postId int) error {
+	return s.repo.DeletePostById(postId)
+}
