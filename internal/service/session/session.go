@@ -17,10 +17,10 @@ func NewSessionService(repo repo.Session) *SessionService {
 	return &SessionService{repo: repo}
 }
 
-func (s *SessionService) CreateSession(userId int) (*models.Session, error) {
-	oldSession, _ := s.repo.GetSessionByUserId(userId)
+func (s *SessionService) Create(userId int) (*models.Session, error) {
+	oldSession, _ := s.repo.GetByUserId(userId)
 	if oldSession != nil {
-		err := s.repo.DeleteSessionByUUID(oldSession.UUID)
+		err := s.repo.DeleteByUUID(oldSession.UUID)
 		if err != nil {
 			return nil, err
 		}
@@ -37,7 +37,7 @@ func (s *SessionService) CreateSession(userId int) (*models.Session, error) {
 		ExpireAt: time.Now().Add(time.Hour * 24),
 	}
 
-	err = s.repo.CreateSession(newSession)
+	err = s.repo.Create(newSession)
 	if err != nil {
 		return nil, err
 	}
@@ -45,10 +45,10 @@ func (s *SessionService) CreateSession(userId int) (*models.Session, error) {
 	return newSession, nil
 }
 
-func (s *SessionService) GetSessionByUUID(uuid string) (*models.Session, error) {
-	return s.repo.GetSessionByUUID(uuid)
+func (s *SessionService) GetByUUID(uuid string) (*models.Session, error) {
+	return s.repo.GetByUUID(uuid)
 }
 
-func (s *SessionService) DeleteSessionByUUID(uuid string) error {
-	return s.repo.DeleteSessionByUUID(uuid)
+func (s *SessionService) DeleteByUUID(uuid string) error {
+	return s.repo.DeleteByUUID(uuid)
 }

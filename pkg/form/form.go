@@ -24,9 +24,11 @@ func New(r *http.Request) *Form {
 		DataForErr: &models.DataForErr{
 			Title:    r.Form.Get("title"),
 			Content:  r.Form.Get("content"),
+			Category: r.Form.Get("category"),
 			Name:     r.Form.Get("name"),
 			Email:    r.Form.Get("email"),
 			Password: r.Form.Get("password"),
+			Report: r.Form.Get("report"),
 		},
 		Request: r,
 	}
@@ -39,7 +41,7 @@ func (f *Form) ErrLengthMax(key string, length int) {
 	}
 
 	if utf8.RuneCountInString(value) > length {
-		err := fmt.Sprintf("This field is too long. Maximum is %d characters", length)
+		err := fmt.Sprintf(models.TextErrFieldTooLong, length)
 		f.Errors[key] = append(f.Errors[key], err)
 	}
 }
@@ -47,7 +49,7 @@ func (f *Form) ErrLengthMax(key string, length int) {
 func (f *Form) ErrLengthMin(key string, length int) {
 	value := f.Request.Form.Get(key)
 	if utf8.RuneCountInString(value) < length {
-		err := fmt.Sprintf("This field is too short. Minimum is %d characters", length)
+		err := fmt.Sprintf(models.TextErrFieldTooShort, length)
 		f.Errors[key] = append(f.Errors[key], err)
 	}
 }
@@ -57,9 +59,9 @@ func (f *Form) ErrEmpty(keys ...string) {
 		value := f.Request.Form.Get(key)
 		valueWithoutSpace := strings.TrimSpace(value)
 		if len(valueWithoutSpace) == 0 {
-			f.Errors[key] = append(f.Errors[key], "This field is empty")
+			f.Errors[key] = append(f.Errors[key], models.TextErrEmptyField)
 		} else if value != valueWithoutSpace {
-			f.Errors[key] = append(f.Errors[key], "This field has extra spaces")
+			f.Errors[key] = append(f.Errors[key], models.TextErrExtraSpace)
 		}
 
 	}
@@ -77,17 +79,17 @@ func (f *Form) ValidEmail(key string) {
 	value := f.Request.Form.Get(key)
 	p := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	if !p.MatchString(value) {
-		f.Errors[key] = append(f.Errors[key], models.ErrEmail)
+		f.Errors[key] = append(f.Errors[key], models.TextErrEmail)
 	}
 }
 
 func (f *Form) ValidPassword(key string) {
 	value := f.Request.Form.Get(key)
 	patterns := map[string]string{
-		`[!@#$%^&*]`: "Contains at least one of the following special characters: !@#$%^&*",
-		`\d`:         "Contains at least one number",
-		`[A-Z]`:      "Contains at least one uppercase letter",
-		`[a-z]`:      "Contains at least one lowercase letter",
+		`[!@#$%^&*]`: models.TextErrSpecialChars,
+		`\d`:         models.TextErrOneNumber,
+		`[A-Z]`:      models.TextErrUpLetter,
+		`[a-z]`:      models.TextErrLowLetter,
 	}
 
 	for pattern, err := range patterns {
@@ -99,14 +101,12 @@ func (f *Form) ValidPassword(key string) {
 }
 
 func (f *Form) ErrImg(h *multipart.FileHeader) {
-
 	if h.Size > 20<<20 {
-		f.Errors["img"] = append(f.Errors["img"], "File size exceeds 20 MB")
+		f.Errors["img"] = append(f.Errors["img"], models.TextErrSize)
 	}
 	nameSplit := strings.Split(h.Filename, ".")
 	mime := strings.ToLower(nameSplit[len(nameSplit)-1])
 	if len(nameSplit) != 2 || (mime != "gif" && mime != "png" && mime != "jpg" && mime != "jpeg") {
-		f.Errors["img"] = append(f.Errors["img"], "Invalid file type ."+mime+" (use JPEG, JPG, PNG, GIF)")
+		f.Errors["img"] = append(f.Errors["img"], fmt.Sprintf(models.TextErrTypeFile, mime))
 	}
-
 }

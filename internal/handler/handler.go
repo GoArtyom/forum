@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"forum/config"
-	"forum/internal/render"
 	"forum/internal/service"
 )
 
@@ -28,7 +27,7 @@ func NewHandler(service *service.Service, tpl *template.Template, googleCfg conf
 	}
 }
 
-func (h *Handler) renderPage(w http.ResponseWriter, file string, data *render.Data) {
+func (h *Handler) renderPage(w http.ResponseWriter, file string, data interface{}) {
 	err := h.template.ExecuteTemplate(w, file, data)
 	if err != nil {
 		log.Printf("ExecuteTemplate:%s\n", err.Error())

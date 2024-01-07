@@ -1,11 +1,12 @@
 package image
 
 import (
-	"forum/internal/models"
-	repo "forum/internal/repository"
 	"io"
 	"os"
 	"strings"
+
+	"forum/internal/models"
+	repo "forum/internal/repository"
 
 	"github.com/gofrs/uuid"
 )
@@ -18,7 +19,7 @@ func NewImageService(repo repo.Image) *ImageService {
 	return &ImageService{repo: repo}
 }
 
-func (s *ImageService) CreateImageByPostIt(newImage *models.CreateImage) error {
+func (s *ImageService) CreateByPostId(newImage *models.CreateImage) error {
 	splitName := strings.Split(newImage.Header.Filename, ".")
 
 	hashName, err := uuid.NewV4()
@@ -35,14 +36,14 @@ func (s *ImageService) CreateImageByPostIt(newImage *models.CreateImage) error {
 	}
 	defer content.Close()
 
-	err = s.repo.CreateImageByPostId(newImage)
+	err = s.repo.CreateByPostId(newImage)
 	if err != nil {
 		return err
 	}
 
-	newFile, err := os.OpenFile("ui/static/img/"+newImage.Name+"."+newImage.Type, os.O_WRONLY|os.O_CREATE, 0666)
+	newFile, err := os.OpenFile("ui/static/img/"+newImage.Name+"."+newImage.Type, os.O_WRONLY|os.O_CREATE, 0o666)
 	if err != nil {
-		err = s.repo.DeleteImageByPostId(newImage.PostId)
+		err = s.repo.DeleteByPostId(newImage.PostId)
 		if err != nil {
 			return err
 		}
@@ -52,7 +53,7 @@ func (s *ImageService) CreateImageByPostIt(newImage *models.CreateImage) error {
 
 	_, err = io.Copy(newFile, content)
 	if err != nil {
-		s.repo.DeleteImageByPostId(newImage.PostId)
+		s.repo.DeleteByPostId(newImage.PostId)
 		if err != nil {
 			return err
 		}
@@ -61,6 +62,19 @@ func (s *ImageService) CreateImageByPostIt(newImage *models.CreateImage) error {
 	return nil
 }
 
-func (s *ImageService) GetImageByPostId(postId int) (*models.Image, error) {
-	return s.repo.GetImageByPostId(postId)
+func (s *ImageService) GetByPostId(postId int) (*models.Image, error) {
+	return s.repo.GetByPostId(postId)
+}
+
+func (s *ImageService) DeleteByPostId(PostId int) error {
+	image, err := s.repo.GetByPostId(PostId)
+	if err != nil {
+		return err
+	}
+	err = os.Remove("ui/static/img/" + image.Name + "." + image.Type)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.DeleteByPostId(PostId)
 }

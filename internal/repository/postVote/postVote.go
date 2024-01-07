@@ -14,13 +14,13 @@ func NewPostVoteSqlite(db *sql.DB) *PostVoteSqlite {
 	return &PostVoteSqlite{db: db}
 }
 
-func (r *PostVoteSqlite) CreatePostVote(newVote *models.PostVote) error {
+func (r *PostVoteSqlite) Create(newVote *models.PostVote) error {
 	query := "INSERT INTO posts_votes (post_id, user_id, vote) VALUES($1, $2, $3)"
 	_, err := r.db.Exec(query, newVote.PostId, newVote.UserId, newVote.Vote)
 	return err
 }
 
-func (r *PostVoteSqlite) GetVoteByUserIdR(newVote *models.PostVote) (int, error) {
+func (r *PostVoteSqlite) GetByUserId(newVote *models.PostVote) (int, error) {
 	var vote int
 
 	query := "SELECT vote FROM posts_votes WHERE post_id = $1 AND user_id = $2"
@@ -28,9 +28,8 @@ func (r *PostVoteSqlite) GetVoteByUserIdR(newVote *models.PostVote) (int, error)
 	return vote, err
 }
 
-func (r *PostVoteSqlite) DeleteVoteByUserIdR(newVote *models.PostVote) error {
+func (r *PostVoteSqlite) DeleteByUserId(newVote *models.PostVote) error {
 	query := "DELETE FROM posts_votes WHERE post_id = $1 AND user_id = $2"
 	_, err := r.db.Exec(query, newVote.PostId, newVote.UserId)
 	return err
 }
-

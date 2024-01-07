@@ -1,94 +1,276 @@
 {{template "base" .}}
-            <section>
-                {{with .Post}}
-                <div class='snippet'>
-                    <div class='metadata'>
-                        <b class="left">{{.Title}}</b>
-                        <span class="right">#{{.PostId}}</span>
-                        <span class="right">{Categories:</span>
-                        {{range .Categories}}
-                        <span class="right">{{.}}</span>
-                        {{end}}
-                        <span class="right">}</span>
-                    </div>
-                        {{with .Image}}
-                            <img class="post_image" src="/static/img/{{.Name}}.{{.Type}}" alt="content_photo">
-                        {{end}}
-                        <pre>{{.Content}}</pre>
+<section>
+    {{with .Post}}
+    <div class='snippet'>
+        <div class='metadata'>
+            <b class="left">{{.Title}}</b>
+            <span class="right">#{{.PostId}}</span>
+            <span class="right">{Categories:</span>
+        {{range .Categories}}
+            <span class="right">{{.}}</span>
+        {{end}}
+            <span class="right">}</span>
+        </div>
+        {{with .Image}}
+        <img class="post_image" src="/static/img/{{.Name}}.{{.Type}}"
+            alt="content_photo">
+        {{end}}
+        <pre>{{.Content}}</pre>
+        <div class='metadata'>
+            <span>
+                <form method="POST" action="/post/vote/create#like">
+                    <input type="hidden" name="post_id" value="{{.PostId}}">
+                    <input type="hidden" name="vote" value=1>
+                    <button id="like" type="submit"><img class="vote"
+                            src="/static/img/like.png" alt="like button">
+                        {{.Like}} </button>
+                </form>
+            </span>
+            <span>
+                <form method="POST" action="/post/vote/create#dislike">
+                    <input type="hidden" name="post_id" value="{{.PostId}}">
+                    <input type="hidden" name="vote" value=-1>
+                    <button id="dislike" type="submit"><img class="vote"
+                            src="/static/img/dislike.png" alt="dislike button">
+                        {{.Dislike}}</button>
+                </form>
+            </span>
+            <div class="time-post">
+                posted {{.CreateAt.Format "02/01/2006 15:04"}}
+                by<b>{{.UserName}}</b>
+            </div>
+        </div>
+    {{end}}
+    {{if .User}}
+        <div class="comments">
+            <div class="comments_create">
+                <form method="POST" action="/comment/create">
+                    <input type="hidden" name="post_id" value={{.Post.PostId}}>
+        {{if .Form}}
+                    <textarea name="content"placeholder="Enter a comment...">{{.Form.DataForErr.Content}}</textarea>
+            {{if .Form.Errors.content}}
+                {{range .Form.Errors.content}}
+                    <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        {{else}}
+                    <textarea name="content"placeholder="Enter a comment..."></textarea>
+        {{end}}
                     <div class='metadata'>
                         <span>
-                            <form method="POST" action="/post/vote/create#like">
-                                <input type="hidden" name="post_id" value="{{.PostId}}">
-                                <input type="hidden" name="vote" value=1>
-                                <button  id="like" type="submit"><img class="vote" src="/static/img/like.png"  alt="like button"> {{.Like}}  </button>
-                            </form>
+                            <button type="submit"
+                                class="post_comment_create">Send</button>
                         </span>
-                        <span>
-                            <form method="POST" action="/post/vote/create#dislike">
-                                <input type="hidden" name="post_id" value="{{.PostId}}">
-                                <input type="hidden" name="vote" value=-1>
-                                <button id="dislike" type="submit"><img  class="vote" src="/static/img/dislike.png"  alt="dislike button"> {{.Dislike}}</button>
-                            </form>
-                        </span>
-                        <div class="time-post">
-                            posted {{.CreateAt.Format "02/01/2006 15:04"}} by<b>{{.UserName}}</b>
-                        </div>
                     </div>
+                </form>
+            </div>
+            <div class="metadata">
+        {{if eq .User.Role 8}}
+                <form method="POST"
+                    action="/post/reporting">
+                    <input type="hidden" name="id" value="{{.Post.PostId}}">
+            {{if .Form}}
+                    <textarea class="report_text" name="report"placeholder="Enter a report...">{{.Form.DataForErr.Report}}</textarea>
+                {{with .Form.Errors.report}}
+                    {{range .}}
+                    <label class="error_report">{{.}}</label>
+                    {{end}}
                 {{end}}
-                {{if .User}}    
-                    <div class="comments">
-                        <div class="comments_create">
-                            <form method="POST" action="/comment/create">
-                                <input type="hidden" name="post_id" value={{.Post.PostId}}>
-                            {{if .Form}}
-                                {{with .Form.Errors.content}}
-                                    {{range .}}
-                                    <label class="error">{{.}}</label>
-                                    {{end}}
-                                 {{end}}
-                                 <textarea name="content" placeholder="Enter a comment...">{{.Form.DataForErr.Content}}</textarea>
-                            {{else}}
-                                <textarea name="content" placeholder="Enter a comment..."></textarea>
-                            {{end}}
-                                <div class='metadata'>
-                                    <span>
-                                        <button type="submit" class="post_comment_create">Send</button>
-                                    </span>
-                                </div>
-                            </form>
-                        </div>
-                {{end}}       
-                {{range .Comments}}
-                <div class="comments_show">
-                            <div class='comment'>
-                                <b>{{.UserName}}</b>
-                            </div>
-                            <pre><code>{{.Content}}</code></pre>
-                            <div id="{{.Id}}" class='comment'>
-                                <span>
-                                    <form method="POST" action="/comment/vote/create#{{.Id}}">
-                                        <input type="hidden" name="post_id" value="{{.PostId}}">
-                                        <input type="hidden" name="comment_id" value="{{.Id}}">
-                                        <input type="hidden" name="vote" value=1>
-                                        <button type="submit"><img class="vote_comment" src="/static/img/like.png"  alt="like button"> {{.Like}}</button>
-                                    </form>
-                                </span>
-                                <span>
-                                    <form method="POST" action="/comment/vote/create#{{.Id}}">
-                                        <input type="hidden" name="post_id" value="{{.PostId}}">
-                                        <input type="hidden" name="comment_id" value="{{.Id}}">
-                                        <input type="hidden" name="vote" value=-1>
-                                        <button type="submit"><img class="vote_comment" src="/static/img/dislike.png"  alt="dislike button"> {{.Dislike}}</button>
-                                    </form>
-                                </span>
-                                
-                                <div class="time-post">
-                                    {{.CreateAt.Format "02/01/2006 15:04"}}
-                                </div>
-                            </div>
-                        </div>
-                {{end}}
+            {{else}}
+                    <textarea class="report_text" name="report" placeholder="Enter a report..."></textarea>
+            {{end}}
+                        <span>
+                            <button type="submit"
+                                class="report_submit">Report</button>
+                        </span>
+                    </form>
+        {{end}}
+        {{if ge .User.Role 8}}
+                    <form method="POST"
+                        action="/post/delete">
+                        <input type="hidden" name="id" value={{.Post.PostId}}>
+                        <span>
+                            <button type="submit"
+                                class="report_submit">Delete</button>
+                        </span>
+                    </form>
+        {{else if eq .User.Id .Post.UserId}}
+                    <form method="POST"
+                        action="/post/delete">
+                        <input type="hidden" name="id" value={{.Post.PostId}}>
+                        <span>
+                            <button type="submit"
+                                class="report_submit">Delete</button>
+                        </span>
+                    </form>
+        {{end}}
+        {{if eq .User.Id .Post.UserId}}
+        <span>
+            <a href="/post/update?id={{.Post.PostId}}"> <button type="submit"
+                class="report_submit">Edit</button> </a>
+        </span>  
+        {{end}}
+                </div>
+            </div>
+    {{end}}
+    {{if .User}}
+        {{$userId := .User.Id}}
+        {{if eq .User.Role 10 }}
+            {{range $i, $v := .Comments}}
+            <div class="comments_show">
+                <div class='comment'>
+                    <b>{{$v.UserName}}</b>
+                </div>
+                <pre><code>{{$v.Content}}</code></pre>
+                <div id="{{$v.Id}}" class='comment comment_reaction'>
+                    <span>
+                        <form method="POST"
+                            action="/comment/vote/create#{{$v.Id}}">
+                            <input type="hidden" name="post_id"
+                                value="{{$v.PostId}}">
+                            <input type="hidden" name="comment_id"
+                                value="{{$v.Id}}">
+                            <input type="hidden" name="vote" value=1>
+                            <button type="submit"><img class="vote_comment"
+                                    src="/static/img/like.png"
+                                    alt="like button"> {{$v.Like}}</button>
+                        </form>
+                    </span>
+                    <span>
+                        <form method="POST"
+                            action="/comment/vote/create#{{$v.Id}}">
+                            <input type="hidden" name="post_id"
+                                value="{{$v.PostId}}">
+                            <input type="hidden" name="comment_id"
+                                value="{{$v.Id}}">
+                            <input type="hidden" name="vote" value=-1>
+                            <button type="submit"><img class="vote_comment"
+                                    src="/static/img/dislike.png"
+                                    alt="dislike button">
+                                {{$v.Dislike}}</button>
+                        </form>
+                    </span>
+                    <span>
+                        <form method="POST"
+                            action="/comment/delete">
+                            <input type="hidden" name="id" value="{{$v.Id}}">
+                            <input type="hidden" name="post_id" value="{{$v.PostId}}">
+                            <button type="submit"
+                                class="report_submit">Delete</button>
+                        </form>
+                    </span>
+                    {{if eq $userId .UserId}}
+                    <span>
+                        <a href="/comment/update?id={{.Id}}"> <button type="submit"
+                            class="report_submit">Edit</button> </a>
+                    </span>
+                    {{end}}
+                    <div class="time-post">
+                        {{$v.CreateAt.Format "02/01/2006 15:04"}}
                     </div>
                 </div>
-            </section>
-            {{template "footer" .}}
+            </div>
+            {{end}}
+        {{else}}
+            {{range .Comments}}
+            <div class="comments_show">
+                <div class='comment'>
+                    <b>{{.UserName}}</b>
+                </div>
+                <pre><code>{{.Content}}</code></pre>
+                <div id="{{.Id}}" class='comment'>
+                    <span>
+                        <form method="POST"
+                            action="/comment/vote/create#{{.Id}}">
+                            <input type="hidden" name="post_id"
+                                value="{{.PostId}}">
+                            <input type="hidden" name="comment_id"
+                                value="{{.Id}}">
+                            <input type="hidden" name="vote" value=1>
+                            <button type="submit"><img class="vote_comment"
+                                    src="/static/img/like.png"
+                                    alt="like button"> {{.Like}}</button>
+                        </form>
+                    </span>
+                    <span>
+                        <form method="POST"
+                            action="/comment/vote/create#{{.Id}}">
+                            <input type="hidden" name="post_id"
+                                value="{{.PostId}}">
+                            <input type="hidden" name="comment_id"
+                                value="{{.Id}}">
+                            <input type="hidden" name="vote" value=-1>
+                            <button type="submit"><img class="vote_comment"
+                                    src="/static/img/dislike.png"
+                                    alt="dislike button">
+                                {{.Dislike}}</button>
+                        </form>
+                    </span>
+                    {{if eq $userId .UserId}}
+                    <span>
+                        <form method="POST"
+                            action="/comment/delete">
+                            <input type="hidden" name="id" value="{{.Id}}">
+                            <input type="hidden" name="post_id" value="{{.PostId}}">
+                            <button type="submit"
+                                class="report_submit">Delete</button>
+                        </form>
+                    </span>
+                    <span>
+                        <a href="/comment/update?id={{.Id}}"> <button type="submit"
+                            class="report_submit">Edit</button> </a>
+                    </span>
+                    {{end}}
+                    <div class="time-post">
+                        {{.CreateAt.Format "02/01/2006 15:04"}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        {{end}}
+    {{else}}
+        {{range .Comments}}
+            <div class="comments_show">
+                <div class='comment'>
+                    <b>{{.UserName}}</b>
+                </div>
+                <pre><code>{{.Content}}</code></pre>
+                <div id="{{.Id}}" class='comment'>
+                    <span>
+                        <form method="POST"
+                            action="/comment/vote/create#{{.Id}}">
+                            <input type="hidden" name="post_id"
+                                value="{{.PostId}}">
+                            <input type="hidden" name="comment_id"
+                                value="{{.Id}}">
+                            <input type="hidden" name="vote" value=1>
+                            <button type="submit"><img class="vote_comment"
+                                    src="/static/img/like.png"
+                                    alt="like button"> {{.Like}}</button>
+                        </form>
+                    </span>
+                    <span>
+                        <form method="POST"
+                            action="/comment/vote/create#{{.Id}}">
+                            <input type="hidden" name="post_id"
+                                value="{{.PostId}}">
+                            <input type="hidden" name="comment_id"
+                                value="{{.Id}}">
+                            <input type="hidden" name="vote" value=-1>
+                            <button type="submit"><img class="vote_comment"
+                                    src="/static/img/dislike.png"
+                                    alt="dislike button">
+                                {{.Dislike}}</button>
+                        </form>
+                    </span>
+
+                    <div class="time-post">
+                        {{.CreateAt.Format "02/01/2006 15:04"}}
+                    </div>
+                </div>
+            </div>
+        {{end}}
+    {{end}}
+        </div>
+    </section>
+{{template "footer" .}}

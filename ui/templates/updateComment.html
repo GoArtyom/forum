@@ -1,0 +1,23 @@
+{{template "base" .}}
+<section>
+    <form method='POST' novalidate>
+        <input type="hidden" name="post_id" value="{{.Comment.PostId}}">
+        <input type="hidden" name="id" value="{{.Comment.Id}}">
+        <div>
+            <label>Comment:</label>
+        {{if .Form}}
+            <textarea name="content">{{.Form.DataForErr.Content}}</textarea>
+            {{with .Form.Errors.content}}
+                {{range .}}
+            <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        {{else}}
+            <textarea name="content">{{.Comment.Content}}</textarea>
+        {{end}}
+        </div>
+        <div>
+            <input type="submit" value="Update comment">
+        </div>
+    </section>
+{{template "footer" .}}

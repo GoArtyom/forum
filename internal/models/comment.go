@@ -21,8 +21,20 @@ type Comment struct {
 	CreateAt time.Time `json:"create_at"`
 }
 
+type UpdateComment struct {
+	Id      int    `json:"comment_id"`
+	UserId  int    `json:"user_id"`
+	Content string `json:"content"`
+}
+
 type CommentVote struct {
 	CommentId int `json:"comment_id"`
 	UserId    int `json:"user_id"`
 	Vote      int `json:"vote"`
+}
+
+type DeleteComment struct {
+	CommentId int   `json:"comment_id"`
+	UserId    int   `json:"user_id"`
+	UserRole  uint8 `json:"role"`
 }

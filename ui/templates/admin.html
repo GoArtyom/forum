@@ -1,0 +1,177 @@
+{{template "base" .}}
+<section>
+    <h2 class="title_category">Categories</h2>
+    <div class="category_admin" role="group" aria-label="Categories">
+        {{range .Categories}}
+        <div class="update_category">
+            <span class="category_name btn-primary">{{.Name}}</span>
+            <form method="POST" action="/admin/categories/delete">
+                <input type="hidden" name="category" value="{{.Name}}">
+                <span>
+                    <button type="submit"
+                        class="category_submit">❌</button>
+                </span>
+            </form>
+        </div>
+        {{end}}
+    </div>
+    <div class="new_category">
+        <form class="new_category_form" method="POST"
+        action="/admin/categories/create">
+{{if .Form}}
+            <input type="text" class="input_category" name="category"placeholder="Enter a new category...">{{.Form.DataForErr.Category}}</input>
+{{else}}
+            <input type="text" class="input_category" name="category"placeholder="Enter a new category..."></input>
+{{end}}
+            <span>
+                <button type="submit"
+                    class="submit_category">Add</button>
+            </span>
+        </form>
+{{if .Form}}
+    {{with .Form.Errors.category}}
+        {{range .}}
+            <label class="error_report">{{.}}</label>
+        {{end}}
+    {{end}}
+{{end}}
+    </div>
+
+    <h2 class="title_category">Requests for moderation</h2>
+
+    {{if .RequestModerator}}
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{range .RequestModerator}}
+            <tr>
+                <td>#{{.Id}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.Email}}</td>      
+                <td class="moderator_request">
+                    <form method="POST" action="/admin/moderator-request">
+                        <input type="hidden" name="role" value="8">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit"class="category_submit">+</button>
+                    </form>
+                    <form method="POST" action="/admin/moderator-request">
+                        <input type="hidden" name="role" value="1">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit"class="category_submit">-</button>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="else_not_table">There are no new applications.</p>
+    {{end}}
+
+
+    <h2 class="title_category">Requests for complaints</h2>
+
+    {{if .Reports}}
+    <table>
+        <thead>
+            <thead>
+                <tr>
+                    <th>PostId</th>
+                    <th>Moderator</th>
+                    <th>Content</th>
+                    <th>Verdict</th>
+                </tr>
+            </thead>
+        </thead>
+        <tbody>
+        {{range .Reports}}
+            <tr>
+                <td>#{{.PostId}}</td>
+                <td>{{.ModeratorName}}</td>
+                <td>{{.Content}}</td>      
+                <td class="moderator_request">
+                    <form method="POST" action="/admin/report">
+                        <input type="hidden" name="resp" value="1">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit">Accept</button>
+                    </form>
+                    /
+                    <form method="POST" action="/admin/report">
+                        <input type="hidden" name="resp" value="2">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="else_not_table">There have been no new complaints.</p>
+    {{end}}
+
+    <h2 class="title_category">All Users</h2>
+
+    {{if .Users}}
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Change Role</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{range .Users}}
+                {{$up := 0}}
+                {{$low := 0}}
+
+                {{if eq .Role 8}}
+                    {{$low = 1}}
+                {{else if eq .Role 5}}
+                    {{$up = 8}}
+                    {{$low = 1}}
+                {{else if eq .Role 1}}
+                    {{$up = 8}}
+                {{end}}
+            <tr>
+                <td>#{{.Id}}</td>
+                <td>{{.Name}}</td>
+        {{ if le .Role 5}}
+                <td>User</td>
+        {{else if eq .Role 8}}
+                <td>Moderator</td>
+        {{end}}
+                <td class="moderator_request">
+                {{if $up}}
+                    <form method="POST" action="/admin/moderator-request">
+                        <input type="hidden" name="role" value="{{$up}}">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit"class="category_submit">↑</button>
+                    </form>
+                {{end}}
+                {{if $low}}
+                    <form method="POST" action="/admin/moderator-request">
+                        <input type="hidden" name="role" value="{{$low}}">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit"class="category_submit">↓</button>
+                    </form>
+                {{end}}
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="else_not_table">There are no registered users yet.</p>
+    {{end}}
+</section>
+{{template "footer" .}}

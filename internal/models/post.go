@@ -21,7 +21,7 @@ type Post struct {
 	UserName   string     `json:"user_name"`
 	CreateAt   time.Time  `json:"create_at"`
 	Categories []string   `json:"categories"`
-	Image      *Image      `json:"image"`
+	Image      *Image     `json:"image"`
 	Comments   []*Comment `json:"comments"`
 	Like       int        `json:"like"`
 	Dislike    int        `json:"dislike"`
@@ -31,4 +31,19 @@ type PostVote struct {
 	PostId int `json:"post_id"`
 	UserId int `json:"user_id"`
 	Vote   int `json:"vote"`
+}
+
+type DeletePost struct {
+	PostId    int   `json:"post_id"`
+	UserId    int   `json:"user_id"`
+	UserRole  uint8 `json:"role"`
+	ServerErr bool
+}
+
+type UpdatePost struct {
+	PostId     int      `json:"id"`
+	UserId     int      `json:"user_id"`
+	Title      string   `json:"title"`
+	Content    string   `json:"content"`
+	Categories []string `json:"categories"`
 }

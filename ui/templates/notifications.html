@@ -1,0 +1,51 @@
+{{template "base" .}}
+<section>
+  <h2>Notifications</h2>
+  {{with .Notifications}}
+    {{range .}}
+        {{if eq .Type 1}}
+        <div class="notice_p">
+            <p>User<p class="text_focus"> {{.UserName}}  </p> left a comment  <p class="text_focus">  {{.Content}}  </p> under your <a class="text_focus" href="/post?id={{.PostId}}"> post </a> at {{.CreateAt.Format "02/01/2006 15:04"}}</p>
+        
+        </div>
+        {{else if eq .Type 2}}
+        <div class="notice_p">
+            <p>User
+                <p class="text_focus"> {{.UserName}}</p> 
+                {{if eq .Vote 1}}
+                liked
+                {{else if eq .Vote -1}}
+                disliked
+                {{end}} 
+                your 
+                <a class="text_focus" href="/post?id={{.PostId}}"> post </a> 
+                at {{.CreateAt.Format "02/01/2006 15:04"}}
+            </p>
+        </div>
+        {{else if eq .Type 3}}
+        <div class="notice_p">
+            <p>User
+                <p class="text_focus"> {{.UserName}}</p> 
+                {{if eq .Vote 1}}
+                liked
+                {{else if eq .Vote -1}}
+                disliked
+                {{end}} 
+                your comment below the 
+                <a class="text_focus" href="/post?id={{.PostId}}">post</a> 
+                at {{.CreateAt.Format "02/01/2006 15:04"}}
+            </p>
+        </div>
+
+        {{else if eq .Type 4}}
+
+        {{end}}
+    {{end}}
+        <form class="del_notice" method="POST">
+            <button>clear all notifications</button>
+        </form>
+  {{else}}
+  <p>No new notifications yet.</p>
+  {{end}} 
+</section>
+{{template "footer" .}}

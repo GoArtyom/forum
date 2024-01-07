@@ -15,23 +15,29 @@ func NewPostVoteService(repo repo.PostVote) *PostVoteService {
 	return &PostVoteService{repo: repo}
 }
 
-func (s *PostVoteService) CreatePostVote(newVote *models.PostVote) error {
-	vote, err := s.repo.GetVoteByUserIdR(newVote)
-	if err != nil && err != sql.ErrNoRows {
-		return err
-	}
+func (s *PostVoteService) Create(newVote *models.PostVote) (uint8, error) {
+	signalForNotification := uint8(0)
 
-	if vote != 0 { // проверяем наличие vote
-		err = s.repo.DeleteVoteByUserIdR(newVote)
+	vote, err := s.repo.GetByUserId(newVote)
+	if err != nil && err != sql.ErrNoRows {
+		return 0, err
+	}
+	// проверяем наличие vote
+	if vote != 0 {
+		signalForNotification += models.VoteSignalDelete
+		
+		err = s.repo.DeleteByUserId(newVote)
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 	if vote != newVote.Vote {
-		err = s.repo.CreatePostVote(newVote)
+		signalForNotification += models.VoteSignalCreate
+
+		err = s.repo.Create(newVote)
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
-	return nil
+	return signalForNotification, nil
 }

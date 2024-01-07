@@ -23,7 +23,7 @@ func (h *Handler) signinGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.renderPage(w, "signin.html", &render.Data{})
+	h.renderPage(w, "signin.html", nil)
 }
 
 // POST
@@ -46,7 +46,7 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 
 	// validate name/ email/ password
 	form := form.New(r)
-	form.Errors = map[string][]string{}
+
 	form.ErrEmpty("email", "password")
 	form.ErrLengthMin("email", 5)
 	form.ErrLengthMax("email", 40)
@@ -59,7 +59,7 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest) // 400
 		form.ErrLog("signinPOST:")
 
-		h.renderPage(w, "signin.html", &render.Data{
+		h.renderPage(w, "signin.html", &render.OnlyForm{
 			Form: form,
 		})
 		return
@@ -70,14 +70,14 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 		Password: r.Form.Get("password"),
 	}
 
-	userId, err := h.service.SignInUser(user)
+	userId, err := h.service.User.SignIn(user)
 	if err != nil {
 		if err == models.ErrIncorData {
 			w.WriteHeader(http.StatusBadRequest) // 400
 			form.Errors["email"] = append(form.Errors["email"], "Email or password is incorrect.")
 			form.ErrLog("signupPOST:")
 
-			h.renderPage(w, "signin.html", &render.Data{
+			h.renderPage(w, "signin.html", &render.OnlyForm{
 				Form: form,
 			})
 			return
@@ -88,9 +88,9 @@ func (h *Handler) signinPOST(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	session, err := h.service.CreateSession(userId)
+	session, err := h.service.Session.Create(userId)
 	if err != nil {
-		log.Printf("signinPOST:CreateSession:%s\n", err.Error())
+		log.Printf("signinPOST:Create:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}

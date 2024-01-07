@@ -22,7 +22,7 @@ func (h *Handler) signupGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.renderPage(w, "signup.html", &render.Data{})
+	h.renderPage(w, "signup.html", nil)
 }
 
 // POST
@@ -45,7 +45,6 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 
 	// validate name/ email/ password
 	form := form.New(r)
-	form.Errors = map[string][]string{}
 	form.ErrEmpty("name", "email", "password")
 	form.ErrLengthMin("name", 5)
 	form.ErrLengthMax("name", 20)
@@ -59,7 +58,7 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 	if len(form.Errors) != 0 {
 		w.WriteHeader(http.StatusBadRequest) // 400
 		form.ErrLog("signupPOST:")
-		h.renderPage(w, "signup.html", &render.Data{
+		h.renderPage(w, "signup.html", &render.OnlyForm{
 			Form: form,
 		})
 		return
@@ -70,7 +69,7 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 		Email:    r.Form.Get("email"),
 		Password: r.Form.Get("password"),
 	}
-	err := h.service.CreateUser(user)
+	err := h.service.User.Create(user)
 	if err != nil {
 		switch err.Error() {
 		case models.UniqueName:
@@ -85,7 +84,7 @@ func (h *Handler) signupPOST(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest) // 400
 		form.ErrLog("signupPOST:")
 
-		h.renderPage(w, "signup.html", &render.Data{
+		h.renderPage(w, "signup.html", &render.OnlyForm{
 			Form: form,
 		})
 		return

@@ -1,52 +1,54 @@
 {{template "base" .}}
-    <section>
-        {{if .Form}}
-        <form action="/auth/signup" method="POST" novalidate>
-            <div>
+<section>
+    {{if .Form}}
+    <form action="/auth/signup" method="POST" novalidate>
+        <div>
+            <label>Name:</label>
+            <input type="text" name="name" value="{{.Form.DataForErr.Name}}" />
             {{with .Form.Errors.name}}
                 {{range .}}
                 <label class="error">{{.}}</label>
                 {{end}}
             {{end}}
-                <label>Name:</label>
-                <input type="text" name="name" value="{{.Form.DataForErr.Name}}" />
-            </div>
-            <div>
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="email" name="email"
+            value="{{.Form.DataForErr.Email}}" />
             {{with .Form.Errors.email}}
                 {{range .}}
                 <label class="error">{{.}}</label>
                 {{end}}
             {{end}}
-                <label>Email:</label>
-                <input type="email" name="email" value="{{.Form.DataForErr.Email}}" />
-            </div>
-            <div>
+        </div>
+        <div>
+            <label>Password:</label>
+            <input type="password" name="password"
+            value="{{.Form.DataForErr.Password}}" />
             {{with .Form.Errors.password}}
                 {{range .}}
                 <label class="error">{{.}}</label>
                 {{end}}
             {{end}}
-                <label>Password:</label>
-                <input type="password" name="password" value="{{.Form.DataForErr.Password}}"/>
+        </div>
+    {{else}}
+    <form action="/auth/signup" method="POST" novalidate>
+            <div>
+                <label>Name:</label>
+                <input type="text" name="name" />
             </div>
-        {{else}}
-            <form action="/auth/signup" method="POST" novalidate>
-                <div>
-                    <label>Name:</label>
-                    <input type="text" name="name"/>
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <input type="email" name="email"/>
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input type="password" name="password"/>
-                </div>
-        {{end}}
-                <div>
-                    <input type="submit" value="Signup"/>
-                </div>
-            </form>
-    </section>
-    {{template "footer" .}}
+            <div>
+                <label>Email:</label>
+                <input type="email" name="email" />
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" name="password" />
+            </div>
+    {{end}}
+            <div>
+                <input type="submit" value="Signup" />
+            </div>
+        </form>
+</section>
+{{template "footer" .}}

@@ -7,36 +7,36 @@ import (
 	"forum/internal/render"
 )
 
-func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) indexGET(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		log.Printf("index:StatusNotFound:%s\n", r.URL.Path)
+		log.Printf("indexGET:StatusNotFound:%s\n", r.URL.Path)
 		h.renderError(w, http.StatusNotFound) // 404
 		return
 	}
 
 	if r.Method != http.MethodGet {
-		log.Printf("index:StatusMethodNotAllowed:%s\n", r.Method)
+		log.Printf("indexGET:StatusMethodNotAllowed:%s\n", r.Method)
 		h.renderError(w, http.StatusMethodNotAllowed) // 405
 		return
 	}
 
 	user := h.getUserFromContext(r)
 
-	posts, err := h.service.GetAllPost()
+	posts, err := h.service.Post.GetAll()
 	if err != nil {
-		log.Printf("index:GetAllPost:%s\n", err.Error())
+		log.Printf("indexGET:GetAll:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
 
-	categories, err := h.service.GetAllCategory()
+	categories, err := h.service.Category.GetAll()
 	if err != nil {
-		log.Printf("index:GetAllCategory:%s\n", err.Error())
+		log.Printf("indexGET:GetAll:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
 
-	h.renderPage(w, "home.html", &render.Data{
+	h.renderPage(w, "home.html", &render.MainData{
 		User:       user,
 		Posts:      posts,
 		Categories: categories,

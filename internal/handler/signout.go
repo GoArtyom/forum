@@ -25,9 +25,9 @@ func (h *Handler) signoutPOST(w http.ResponseWriter, r *http.Request) {
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
-	err = h.service.DeleteSessionByUUID(session.Value)
+	err = h.service.DeleteByUUID(session.Value)
 	if err != nil {
-		log.Printf("signoutPOST:DeleteSessionByUUID:%s\n", r.URL.Path)
+		log.Printf("signoutPOST:DeleteByUUID:%s\n", r.URL.Path)
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}

@@ -23,9 +23,9 @@ func (h *Handler) filterPostsGET(w http.ResponseWriter, r *http.Request) {
 	}
 	category := r.URL.Query().Get("category")
 
-	posts, err := h.service.GetPostsByCategory(category)
+	posts, err := h.service.GetByCategory(category)
 	if err != nil {
-		log.Printf("filterPostsGET:GetPostsByCategory:%s\n", err.Error())
+		log.Printf("filterPostsGET:GetByCategory:%s\n", err.Error())
 		if err == sql.ErrNoRows {
 			h.renderError(w, http.StatusBadRequest) // 400
 			return
@@ -33,16 +33,16 @@ func (h *Handler) filterPostsGET(w http.ResponseWriter, r *http.Request) {
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
-	categories, err := h.service.GetAllCategory()
+	categories, err := h.service.Category.GetAll()
 	if err != nil {
-		log.Printf("filterPostsGET:GetAllCategory:%s\n", err.Error())
+		log.Printf("filterPostsGET:GetAll:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
 
 	user := h.getUserFromContext(r)
 
-	h.renderPage(w, "home.html", &render.Data{
+	h.renderPage(w, "home.html", &render.MainData{
 		User:       user,
 		Posts:      posts,
 		Categories: categories,

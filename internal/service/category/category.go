@@ -6,13 +6,21 @@ import (
 )
 
 type CategoryService struct {
-	repo repo.Category
+	repo *repo.Repository
 }
 
-func NewCategoryService(repo repo.Category) *CategoryService {
+func NewCategoryService(repo *repo.Repository) *CategoryService {
 	return &CategoryService{repo: repo}
 }
 
-func (s *CategoryService) GetAllCategory() ([]*models.Category, error) {
-	return s.repo.GetAllCategory()
+func (s *CategoryService) GetAll() ([]*models.Category, error) {
+	return s.repo.Category.GetAll()
+}
+
+func (s *CategoryService) Create(name string) error {
+	return s.repo.Category.Create(name)
+}
+
+func (s *CategoryService) DeleteByName(name string) error {
+	return s.repo.Category.DeleteByName(name)
 }

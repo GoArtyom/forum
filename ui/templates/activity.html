@@ -1,0 +1,134 @@
+{{template "base" .}}
+<section>
+    <h2 class="title_category">My Posts</h2>
+    {{if .MyPosts}}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Actions</th>
+            <th>Created</th>
+        </tr>
+        {{range .MyPosts}}
+        <tr>
+            <td><a href="/post?id={{.PostId}}">{{ .Title}}</a></td>
+            <td>{{.Content}}</td>
+            <td>
+                <div class="actions">
+                    <form method="POST" action="/post/delete">
+                        <input type="hidden" name="id" value="{{.PostId}}" />
+                        <span>
+                            <button type="submit" class="report_submit">Delete</button>
+                        </span>
+                    </form>
+                    <span>
+                        <a href="/post/update?id={{.PostId}}">
+                            <button type="submit" class="report_submit">Edit</button>
+                        </a>
+                    </span>
+                </div>
+            </td>
+            <td>{{.CreateAt.Format "02/01/2006"}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+    <p>There are no posts yet.</p>
+    {{end}}
+
+    <h2 class="title_category">My Comments</h2>
+    {{if .MyComments}}
+    <table>
+        <tr>
+            <th>Post</th>
+            <th>Comment</th>
+            <th>Actions</th>
+            <th>Created</th>
+        </tr>
+        {{range .MyComments}}
+        <tr>
+            <td><a href="/post?id={{.PostId}}">View post #{{.PostId}}</a></td>
+            <td>{{ .Content}}</td>
+            <td>
+                <div class="actions">
+                    <form method="POST" action="/comment/delete">
+                        <input type="hidden" name="id" value="{{.Id}}" />
+                        <input type="hidden" name="post_id" value="{{.PostId}}" />
+                        <span>
+                            <button type="submit" class="report_submit">Delete</button>
+                        </span>
+                    </form>
+                    <span>
+                        <a href="/comment/update?id={{.Id}}">
+                            <button type="submit" class="report_submit">Edit</button>
+                        </a>
+                    </span>
+                </div>
+            </td>
+            <td>{{.CreateAt.Format "02/01/2006"}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+    <p>There are no comments yet.</p>
+    {{end}}
+
+    <h2 class="title_category">My Vote Posts</h2>
+    {{if .VotesPosts}}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Author</th>
+            <th>Vote</th>
+            <th>Created</th>
+        </tr>
+        {{range .VotesPosts}}
+        <tr>
+            <td><a href="/post?id={{.PostId}}">{{ .Title}}</a></td>
+            <td>{{.Content}}</td>
+            <td>{{.UserName}}</td>
+
+            {{if eq .Like 1}}
+            <td>Like</td>
+            {{else}}
+            <td>Dislike</td>
+            {{end}}
+            <td>{{.CreateAt.Format "02/01/2006"}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+    <p>No reactions to the posts yet</p>
+    {{end}}
+
+    <h2 class="title_category">My Vote Comments</h2>
+    {{if .VotesComments}}
+    <table>
+        <tr>
+            <th>Post</th>
+            <th>Content</th>
+            <th>Author</th>
+            <th>Vote</th>
+            <th>Created</th>
+        </tr>
+        {{range .VotesComments}}
+        <tr>
+            <td><a href="/post?id={{.PostId}}">View post #{{.PostId}}</a></td>
+            <td>{{.Content}}</td>
+            <td>{{.UserName}}</td>
+
+            {{if eq .Like 1}}
+            <td>Like</td>
+            {{else}}
+            <td>Dislike</td>
+            {{end}}
+            <td>{{.CreateAt.Format "02/01/2006"}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+    <p>No reactions to the comments yet.</p>
+    {{end}}
+</section>
+{{template "footer" .}}

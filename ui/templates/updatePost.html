@@ -1,0 +1,79 @@
+{{template "base" .}}
+<section>
+    <form method='POST' enctype="multipart/form-data">
+    {{if .Form}}
+        <div>
+            <label>Title:</label>
+            <input type='text' name='title' value="{{.Form.DataForErr.Title}}">
+            {{with .Form.Errors.title}}
+                {{range .}}
+                <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        </div>
+        <div>
+            <label>Content:</label>
+            <textarea name="content">{{.Form.DataForErr.Content}}</textarea>
+            {{with .Form.Errors.content}}
+                {{range .}}
+                <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        </div>
+        <div>
+            <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
+            {{with .Form.Errors.img}}
+                {{range .}}
+            <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        </div>
+        <div>
+            <div>
+        {{with .Form.Errors.categories}}
+            {{range .}}
+                <label class="error">{{.}}</label>
+            {{end}}
+        {{end}}
+                <label>Category:</label>
+        {{range .Categories}}
+                <div class="ctg">
+                    <input type="checkbox" name="categories" value="{{.Name}}">
+                    <label>{{.Name}}</label>
+                </div>
+        {{end}}
+            </div>
+        </div>
+        <div>
+            <input type="submit" value="Update post">
+        </div>
+    {{else}}
+        <div>
+            <label>Title:</label>
+            <input type='text' name='title' value="{{.Post.Title}}">
+        </div>
+        <div>
+
+            <label>Content:</label>
+            <textarea name="content">{{.Post.Content}}</textarea>
+        </div>
+        <div>
+            <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
+        </div>
+        <div>
+            <div>
+                <label>Category:</label>
+        {{range .Categories}}
+                <div class="ctg">
+                    <input type="checkbox" name="categories" value="{{.Name}}">
+                    <label>{{.Name}}</label>
+                </div>
+        {{end}}
+            </div>
+        </div>
+        <div>
+            <input type="submit" value="Update post">
+        </div>
+{{end}}
+    </section>
+{{template "footer" .}}

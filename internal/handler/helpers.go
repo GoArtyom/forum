@@ -2,13 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"forum/internal/models"
 )
@@ -21,23 +19,23 @@ func (h *Handler) getUserFromContext(r *http.Request) *models.User {
 	return user
 }
 
-func (h *Handler) getPostIdFromURL(path string) (int, error) {
-	parts := strings.Split(path, "/")
-	if len(parts) != 3 {
-		return 0, errors.New("incorrect path")
-	}
-	rx := regexp.MustCompile(`^[^0,+,-]{1,}\d*$`)
-	if !rx.MatchString(parts[2]) {
-		return 0, fmt.Errorf("incorrect request vote = %s", parts[2])
-	}
+// func (h *Handler) getPostIdFromURL(path string) (int, error) {
+// 	parts := strings.Split(path, "/")
+// 	if len(parts) != 3 {
+// 		return 0, errors.New("incorrect path")
+// 	}
+// 	rx := regexp.MustCompile(`^[^0,+,-]{1,}\d*$`)
+// 	if !rx.MatchString(parts[2]) {
+// 		return 0, fmt.Errorf("incorrect request vote = %s", parts[2])
+// 	}
 
-	postId, err := strconv.Atoi(parts[2])
-	if err != nil {
-		return 0, err
-	}
+// 	postId, err := strconv.Atoi(parts[2])
+// 	if err != nil {
+// 		return 0, err
+// 	}
 
-	return postId, nil
-}
+// 	return postId, nil
+// }
 
 func (h *Handler) getVote(voteStr string) (int, error) {
 	rx := regexp.MustCompile(`^[^0,+]{1,}\d*$`)
@@ -54,9 +52,7 @@ func (h *Handler) getVote(voteStr string) (int, error) {
 	return vote, nil
 }
 
-func (h *Handler) getIntFromForm(r *http.Request, key string) (int, error) {
-	value := r.Form.Get(key)
-
+func (h *Handler) getIntFromForm(value string) (int, error) {
 	rx := regexp.MustCompile(`^[^0,+,-]{1,}\d*$`)
 	if !rx.MatchString(value) {
 		return 0, fmt.Errorf("incorrect request vote = %s", value)
@@ -83,7 +79,7 @@ func getValueFromBody(body []byte, key string) string {
 	return res
 }
 
-func getValueFromURL(body string, key string) string {
+func getValueFromURL(body, key string) string {
 	valuer, err := url.ParseQuery(body)
 	if err != nil {
 		return ""

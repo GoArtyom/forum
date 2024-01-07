@@ -1,79 +1,79 @@
 {{template "base" .}}
-            <section>
-                <form method='POST' enctype="multipart/form-data" >
-                    {{if .Form}}
-                    <div>
-                        {{with .Form.Errors.title}}
-                            {{range .}}
-                        <label class="error">{{.}}</label>
-                            {{end}}
-                        {{end}}
-                        <label>Title:</label>
-                        <input type='text' name='title' value="{{.Form.DataForErr.Title}}">
-                    </div>
-                    <div>
-                        {{with .Form.Errors.content}}
-                            {{range .}}
-                            <label class="error">{{.}}</label>
-                            {{end}}
-                        {{end}}
-                        <label>Content:</label>
-                        <textarea name="content">{{.Form.DataForErr.Content}}</textarea>
-                    </div>
-                    {{with .Form.Errors.img}}
-                            {{range .}}
-                        <label class="error">{{.}}</label>
-                            {{end}}
-                        {{end}}
-                    <div>
-                        <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
-                    </div>
-                    <div>
-                        <div>
-                        {{with .Form.Errors.categories}}
-                            {{range .}}
-                        <label class="error">{{.}}</label>
-                            {{end}}
-                        {{end}}
-                            <label>Category:</label>
-                                {{range .Categories}}
-                                    <div class="ctg">
-                                        <input type="checkbox" name="categories" value="{{.Name}}">
-                                        <label>{{.Name}}</label>
-                                    </div>
-                                {{end}}
-                        </div>
-                    </div>
-                    <div>
-                        <input type="submit" value="Publish post">
-                    </div>
-                    {{else}}
-                    <div>
-                        <label>Title:</label>
-                        <input type='text' name='title' value="">
-                    </div>
-                    <div>
-                        
-                        <label>Content:</label>
-                        <textarea name="content" ></textarea >
-                    </div>
-                    <div>
-                        <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
-                    </div>
-                    <div>
-                        <div>
-                            <label>Category:</label>
-                                {{range .Categories}}
-                                    <div class="ctg">
-                                        <input type="checkbox" name="categories" value="{{.Name}}">
-                                        <label>{{.Name}}</label>
-                                    </div>
-                                {{end}}
-                        </div>
-                    </div>
-                    <div>
-                        <input type="submit" value="Publish post">
-                    </div>
-                    {{end}}
-                </section>
+<section>
+    <form method='POST' enctype="multipart/form-data">
+    {{if .Form}}
+        <div>
+            <label>Title:</label>
+            <input type='text' name='title' value="{{.Form.DataForErr.Title}}">
+            {{with .Form.Errors.title}}
+                {{range .}}
+                <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        </div>
+        <div>
+            <label>Content:</label>
+            <textarea name="content">{{.Form.DataForErr.Content}}</textarea>
+            {{with .Form.Errors.content}}
+                {{range .}}
+                <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        </div>
+        <div>
+            <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
+            {{with .Form.Errors.img}}
+                {{range .}}
+            <label class="error">{{.}}</label>
+                {{end}}
+            {{end}}
+        </div>
+        <div>
+            <div>
+        {{with .Form.Errors.categories}}
+            {{range .}}
+                <label class="error">{{.}}</label>
+            {{end}}
+        {{end}}
+                <label>Category:</label>
+        {{range .Categories}}
+                <div class="ctg">
+                    <input type="checkbox" name="categories" value="{{.Name}}">
+                    <label>{{.Name}}</label>
+                </div>
+        {{end}}
+            </div>
+        </div>
+        <div>
+            <input type="submit" value="Publish post">
+        </div>
+    {{else}}
+        <div>
+            <label>Title:</label>
+            <input type='text' name='title' value>
+        </div>
+        <div>
+
+            <label>Content:</label>
+            <textarea name="content"></textarea>
+        </div>
+        <div>
+            <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
+        </div>
+        <div>
+            <div>
+                <label>Category:</label>
+        {{range .Categories}}
+                <div class="ctg">
+                    <input type="checkbox" name="categories" value="{{.Name}}">
+                    <label>{{.Name}}</label>
+                </div>
+        {{end}}
+            </div>
+        </div>
+        <div>
+            <input type="submit" value="Publish post">
+        </div>
+{{end}}
+    </section>
 {{template "footer" .}}

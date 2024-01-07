@@ -31,7 +31,7 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId, err := h.getIntFromForm(r, "post_id")
+	postId, err := h.getIntFromForm(r.Form.Get("post_id"))
 	if err != nil {
 		log.Printf("createCommentPOST:getIntFromForm():%s\n", err.Error())
 		h.renderError(w, http.StatusBadRequest) // 400
@@ -42,31 +42,30 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 
 	form := form.New(r)
 	form.ErrEmpty("content")
-	form.ErrLengthMin("content", 5)
+	form.ErrLengthMin("content", 4)
 	form.ErrLengthMax("content", 1000)
 
 	if len(form.Errors) != 0 {
 		form.ErrLog("createCommentPOST:")
 		w.WriteHeader(http.StatusBadRequest)
-		post, err := h.service.GetPostById(postId)
+		post, err := h.service.Post.GetById(postId)
 		if err != nil {
+			log.Printf("createCommentPOST:GetById:%s\n", err.Error())
 			if err == sql.ErrNoRows {
-				log.Printf("onePostGET:GetPostById:post not found:%s\n", err.Error())
 				h.renderError(w, http.StatusBadRequest) // 400
 				return
 			}
-			log.Printf("onePostGET:GetPostById:%s\n", err.Error())
 			h.renderError(w, http.StatusInternalServerError) // 500
 			return
 		}
 
-		comments, err := h.service.GetAllCommentByPostId(post.PostId)
+		comments, err := h.service.Comment.GetAllByPostId(post.PostId)
 		if err != nil {
-			log.Printf("onePostGET:GetAllCommentByPostId:%s\n", err.Error())
+			log.Printf("createCommentPOST:GetAllCommentByPostId:%s\n", err.Error())
 			h.renderError(w, http.StatusInternalServerError) // 500
 			return
 		}
-		h.renderPage(w, "post.html", &render.Data{
+		h.renderPage(w, "post.html", &render.OnePostData{
 			User:     user,
 			Post:     post,
 			Comments: comments,
@@ -83,7 +82,7 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 		CreateAt: time.Now(),
 	}
 
-	err = h.service.CreateComment(newComment)
+	commentId, err := h.service.Comment.Create(newComment)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("createCommentPOST:CreateComment:post not found:%s\n", err.Error())
@@ -94,5 +93,21 @@ func (h *Handler) createCommentPOST(w http.ResponseWriter, r *http.Request) {
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
-	http.Redirect(w, r, fmt.Sprintf("/post/%d", postId), http.StatusSeeOther) // 303
+	newNoitification := &models.Notification{
+		PostId:    postId,
+		CommentId: commentId,
+		UserId:    user.Id,
+		UserName:  user.Name,
+		Content:   r.Form.Get("content"),
+		Type:      models.NoticeTypeComment,
+		CreateAt:  time.Now(),
+	}
+	err = h.service.Notification.Create(newNoitification)
+	if err != nil {
+		log.Printf("createCommentPOST:CreateNotification:%s\n", err.Error())
+		h.renderError(w, http.StatusInternalServerError) // 500
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/post?id=%d", postId), http.StatusSeeOther) // 303
 }

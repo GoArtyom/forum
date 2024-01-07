@@ -23,7 +23,7 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 
 	// POST
-	case http.MethodPost:
+	case "POST":
 		if err := r.ParseMultipartForm(int64(21 << 20)); err != nil {
 			log.Printf("createPostPOST:ParseForm:%s\n", err.Error())
 			h.renderError(w, http.StatusBadRequest) // 400
@@ -54,14 +54,14 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest) // 400
 			form.ErrLog("createPostPOST:")
 
-			categories, err := h.service.GetAllCategory()
+			categories, err := h.service.Category.GetAll()
 			if err != nil {
-				log.Printf("createPostGET:GetAllCategory:%s\n", err.Error())
+				log.Printf("createPostPOST:GetAll:%s\n", err.Error())
 				h.renderError(w, http.StatusInternalServerError) // 500
 				return
 			}
 
-			h.renderPage(w, "create.html", &render.Data{
+			h.renderPage(w, "create.html", &render.CreatePost{
 				User:       user,
 				Categories: categories,
 				Form:       form,
@@ -78,7 +78,7 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			CreateAt:   time.Now(),
 		}
 
-		id, err := h.service.CreatePost(newPost)
+		id, err := h.service.Post.Create(newPost)
 		if err != nil {
 			log.Printf("createPostPOST:CreatePost:%s\n", err.Error())
 			if err.Error() == models.IncorRequest {
@@ -89,36 +89,36 @@ func (h *Handler) createPostGET_POST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		newImage := &models.CreateImage{
-			Header: handlerFile,
-			PostId: id,
-		}
-
 		if handlerFile != nil {
-			err = h.service.CreateImageByPostIt(newImage)
+			newImage := &models.CreateImage{
+				Header: handlerFile,
+				PostId: id,
+			}
+
+			err = h.service.Image.CreateByPostId(newImage)
 			if err != nil {
-				log.Printf("createPostPOST:CreateImageByPostIt: %s\n", err.Error())
-				err = h.service.DeletePostById(id)
+				log.Printf("createPostPOST:CreateByPostId: %s\n", err.Error())
+				err = h.service.Post.DeleteById(&models.DeletePost{ServerErr: true})
 				if err != nil {
-					log.Printf("createPostPOST:DeletePostById: %s\n", err.Error())
+					log.Printf("createPostPOST:DeleteById: %s\n", err.Error())
 				}
 				h.renderError(w, http.StatusInternalServerError) // 500
 				return
 			}
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/post/%d", id), http.StatusSeeOther) // 303
+		http.Redirect(w, r, fmt.Sprintf("/post?id=%d", id), http.StatusSeeOther) // 303
 
 	// GET
-	case http.MethodGet:
+	case "GET":
 
-		categories, err := h.service.GetAllCategory()
+		categories, err := h.service.Category.GetAll()
 		if err != nil {
-			log.Printf("createPostGET:GetAllCategory:%s\n", err.Error())
+			log.Printf("createPostGET:GetAll:%s\n", err.Error())
 			h.renderError(w, http.StatusInternalServerError) // 500
 			return
 		}
-		h.renderPage(w, "create.html", &render.Data{
+		h.renderPage(w, "create.html", &render.CreatePost{
 			User:       user,
 			Categories: categories,
 		})

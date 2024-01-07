@@ -1,39 +1,69 @@
 {{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Forum</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="/static/css/style.css">
-        <link rel="shortcut icon" href="/static/img/icons8.png" type="image/x-icon">
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap');
-          </style>
-    </head>
-    <body>
-        <header>
-            <h1><a href='/'>Forum</a></h1>
-        </header>
-        <nav>
-            <div>
-                <a class="navbutton" href="/">Home</a>
-                {{if .User}}
-                <a class="navbutton" href="/post/create">Create Post</a>
-                <a class="navbutton" href="/likeposts">Liked Posts</a>
-                {{end}}
-            </div>
-            <div>
-                {{if .User}}
-                <a class="navbutton" href="/myposts">My Posts</a>
-                <form action="/auth/signout" method="POST">
-                    <button type="submit">Signout</button>
-                </form>
-                {{else}}
-                <a class="navbutton" href="/signup">Signup</a>
-                <a class="navbutton" href="/signin">Signin</a>
-                {{end}}
-            </div>
-        </nav>
-{{end}}
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Forum</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link
+      rel="shortcut icon"
+      href="/static/img/icons8.png"
+      type="image/x-icon"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap");
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">Forum</a></h1>
+    </header>
+    <nav>
+      <div class="nav_user">
+        {{with .User}}
+        <a class="navbutton" href="/post/create">Create Post</a>
+        <a class="role">Role:</a>
+        {{if eq .Role 1}}
+        <a>User</a>
+        <form class="navbutton" action="/moderator/request" method="POST">
+          <button class="request_moderator_submit" type="submit">
+            Request Moderator
+          </button>
+        </form>
+        {{else if eq .Role 5}}
+        <a>Expectation</a>
+        {{else if eq .Role 8}}
+        <a>Moderator</a>
+        {{else if eq .Role 10}}
+        <a class="role" href="/admin">Admin</a>
+        {{end}} {{end}}
+      </div>
+      <div>
+        {{if .User}}
+        {{if eq .User.CountNotice 0}}
+        <a href="/mynotifications" class="role"><img class="notice_icon" src="/static/img/noticeS.png" alt="notification"></a>
+        {{else}}
+        <a href="/mynotifications" class="role">{{.User.CountNotice}} <img class="notice_icon" src="/static/img/notice.gif" alt="notification"></a>
+        {{end}}
+        <a class="navbutton" href="/myactivity">My Activity</a>
+        <b class="user_name"><{{.User.Name}}></b>
+        <form action="/auth/signout" method="POST">
+          <button type="submit">Signout</button>
+        </form>
+        {{else}}
+        <a class="navbutton" href="/signup">Signup</a>
+        <a class="navbutton" href="/signin">Signin</a>
+        {{end}}
+      </div>
+    </nav>
+    {{end}}
+  </body>
+</html>

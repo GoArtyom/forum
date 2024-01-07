@@ -41,7 +41,7 @@ func RunServer(cfg *config.Config) {
 
 	go handler.CleanupVisitors()
 
-	log.Println("[OK]:listening on: http://localhost" + cfg.Port)
+	log.Println("[OK]:listening on: https://localhost" + cfg.Port)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

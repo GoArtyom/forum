@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"forum/internal/models"
 	"forum/pkg"
 )
 
@@ -21,7 +22,7 @@ func (h *Handler) sessionMiddleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-		session, err := h.service.GetSessionByUUID(cookie.Value)
+		session, err := h.service.Session.GetByUUID(cookie.Value)
 		if err != nil {
 			pkg.DeleteCookie(w, "UUID")
 			next.ServeHTTP(w, r)
@@ -32,23 +33,55 @@ func (h *Handler) sessionMiddleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-		user, err := h.service.GetUserByUserId(session.User_id)
+		user, err := h.service.User.GetById(session.User_id)
 		if err != nil {
 			pkg.DeleteCookie(w, "UUID")
-			h.service.DeleteSessionByUUID(cookie.Value)
+			h.service.DeleteByUUID(cookie.Value)
 			next.ServeHTTP(w, r)
 			return
 		}
+
+		count, err := h.service.Notification.GetCountByAuthorId(user.Id)
+		if err != nil {
+			log.Printf("sessionMiddleware:Notification.GetCountByAuthorId:%s\n", err.Error())
+			h.renderError(w, http.StatusInternalServerError) // 500
+			return
+		}
+		
+		user.CountNotice = count
+
 		ctx := context.WithValue(r.Context(), keyUser, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func (h *Handler) authorization(next http.Handler) http.Handler {
+func (h *Handler) authUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := h.getUserFromContext(r)
 		if user == nil {
 			http.Redirect(w, r, "/signin", http.StatusSeeOther) // 303
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (h *Handler) authModerator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := h.getUserFromContext(r)
+		if user.Role < models.ModeratorRole {
+			h.renderError(w, http.StatusForbidden) // 403
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (h *Handler) authAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := h.getUserFromContext(r)
+		if user.Role != models.AdminRole {
+			h.renderError(w, http.StatusForbidden) // 403
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -89,6 +122,7 @@ func (h *Handler) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {
+				log.Println("recoverPanic:", err)
 				w.Header().Set("Connection", "close")
 				h.renderError(w, http.StatusInternalServerError)
 			}

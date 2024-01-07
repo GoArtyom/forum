@@ -88,9 +88,9 @@ func (h *Handler) callbackGoogle(w http.ResponseWriter, r *http.Request) {
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
-	_, err = h.service.GetUserByEmail(userInfoGoogle.Email)
+	_, err = h.service.GetByEmail(userInfoGoogle.Email)
 	if err != nil && err != sql.ErrNoRows {
-		log.Printf("callbackgithub: failed GetUserByEmail: %s\n", err.Error())
+		log.Printf("callbackgithub: failed GetByEmail: %s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
@@ -103,7 +103,7 @@ func (h *Handler) callbackGoogle(w http.ResponseWriter, r *http.Request) {
 			Mode:     models.GoogleMode,
 		}
 
-		err := h.service.CreateUser(createUser)
+		err := h.service.User.Create(createUser)
 		if err != nil {
 			log.Printf("callbackGoogle:CreateUser:%s\n", err.Error())
 			h.renderError(w, http.StatusInternalServerError) // 500
@@ -119,16 +119,16 @@ func (h *Handler) callbackGoogle(w http.ResponseWriter, r *http.Request) {
 		Mode:     models.GoogleMode,
 	}
 
-	userId, err := h.service.SignInUser(signInUser)
+	userId, err := h.service.User.SignIn(signInUser)
 	if err != nil {
 		log.Printf("callbackGoogle:SignInUser:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
 
-	session, err := h.service.CreateSession(userId)
+	session, err := h.service.Session.Create(userId)
 	if err != nil {
-		log.Printf("callbackGoogle:CreateSession:%s\n", err.Error())
+		log.Printf("callbackGoogle:Create:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}

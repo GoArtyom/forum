@@ -87,7 +87,7 @@ func (h *Handler) callbackGithub(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.service.GetUserByEmail(userInfoGitHub.NodeId)
+	_, err = h.service.GetByEmail(userInfoGitHub.NodeId)
 	if err != nil {
 		createUser := &models.CreateUser{
 			Name:     userInfoGitHub.Login,
@@ -96,7 +96,7 @@ func (h *Handler) callbackGithub(w http.ResponseWriter, r *http.Request) {
 			Mode:     models.GitHubMode,
 		}
 
-		err := h.service.CreateUser(createUser)
+		err := h.service.User.Create(createUser)
 		if err != nil {
 			log.Printf("callbackgithub:CreateUser:%s\n", err.Error())
 			h.renderError(w, http.StatusInternalServerError) // 500
@@ -112,16 +112,16 @@ func (h *Handler) callbackGithub(w http.ResponseWriter, r *http.Request) {
 		Mode:     models.GitHubMode,
 	}
 
-	userId, err := h.service.SignInUser(signInUser)
+	userId, err := h.service.User.SignIn(signInUser)
 	if err != nil {
 		log.Printf("callbackgithub:SignInUser:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
 
-	session, err := h.service.CreateSession(userId)
+	session, err := h.service.Session.Create(userId)
 	if err != nil {
-		log.Printf("callbackgithub:CreateSession:%s\n", err.Error())
+		log.Printf("callbackgithub:Create:%s\n", err.Error())
 		h.renderError(w, http.StatusInternalServerError) // 500
 		return
 	}
